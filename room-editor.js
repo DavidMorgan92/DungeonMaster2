@@ -124,6 +124,7 @@ class RoomEditor {
         this.selectedSightBlocker.x = worldPoint.x - this.selectedSightBlocker.width / 2
         this.selectedSightBlocker.y = worldPoint.y - this.selectedSightBlocker.height / 2
         this.canvasManager.scheduleRender()
+        this.canvasManager.canvas.style.cursor = 'grabbing'
       } else if (this.rotating) {
         const centerScreen = CoordinateUtils.worldToScreen({
           x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
@@ -132,6 +133,7 @@ class RoomEditor {
         const angle = Math.atan2(event.offsetY - centerScreen.y, event.offsetX - centerScreen.x) * 180 / Math.PI
         this.selectedSightBlocker.angle = angle
         this.canvasManager.scheduleRender()
+        this.canvasManager.canvas.style.cursor = 'grabbing'
       }
     }
   }
