@@ -12,15 +12,23 @@ class SightBlocker {
     ctx.fillStyle = 'darkgray'
 
     const corners = this.getCorners(centerX, centerY)
-    ctx.beginPath()
-    ctx.moveTo(corners[0].x, corners[0].y)
-    for (let i = 1; i < corners.length; i++) {
-      ctx.lineTo(corners[i].x, corners[i].y)
-    }
-    ctx.closePath()
-    ctx.fill()
+    
+    this.drawProjection(ctx, centerX, centerY, corners[0], corners[1])
+    this.drawProjection(ctx, centerX, centerY, corners[1], corners[2])
+    this.drawProjection(ctx, centerX, centerY, corners[2], corners[3])
+    this.drawProjection(ctx, centerX, centerY, corners[3], corners[0])
 
     ctx.restore()
+  }
+
+  drawProjection(ctx, centerX, centerY, corner1, corner2) {
+    ctx.beginPath()
+    ctx.moveTo(corner1.x, corner1.y)
+    ctx.lineTo(corner2.x, corner2.y)
+    ctx.lineTo(corner2.x * 1000, corner2.y * 1000)
+    ctx.lineTo(corner1.x * 1000, corner1.y * 1000)
+    ctx.closePath()
+    ctx.fill()
   }
 
   getCorners(centerX, centerY) {
@@ -31,10 +39,22 @@ class SightBlocker {
     const halfHeight = this.height / 2
 
     return [
-      { x: this.x - centerX + (-halfWidth * cos - -halfHeight * sin), y: this.y - centerY + (-halfWidth * sin + -halfHeight * cos) },
-      { x: this.x - centerX + (halfWidth * cos - -halfHeight * sin), y: this.y - centerY + (halfWidth * sin + -halfHeight * cos) },
-      { x: this.x - centerX + (halfWidth * cos - halfHeight * sin), y: this.y - centerY + (halfWidth * sin + halfHeight * cos) },
-      { x: this.x - centerX + (-halfWidth * cos - halfHeight * sin), y: this.y - centerY + (-halfWidth * sin + halfHeight * cos) },
+      {
+        x: this.x - centerX + (-halfWidth * cos - -halfHeight * sin),
+        y: this.y - centerY + (-halfWidth * sin + -halfHeight * cos),
+      },
+      {
+        x: this.x - centerX + (halfWidth * cos - -halfHeight * sin),
+        y: this.y - centerY + (halfWidth * sin + -halfHeight * cos),
+      },
+      {
+        x: this.x - centerX + (halfWidth * cos - halfHeight * sin),
+        y: this.y - centerY + (halfWidth * sin + halfHeight * cos),
+      },
+      {
+        x: this.x - centerX + (-halfWidth * cos - halfHeight * sin),
+        y: this.y - centerY + (-halfWidth * sin + halfHeight * cos),
+      },
     ]
   }
 }

@@ -65,15 +65,15 @@
       const cos = Math.cos(theta)
       const sin = Math.sin(theta)
 
-      theta += 0.01
+      theta += 0.02
       sightProviders[0].x = center1.x + cos * 100
       sightProviders[0].y = center1.y + sin * 100
 
       sightProviders[1].x = center2.x - cos * 50
       sightProviders[1].y = center2.y - sin * 50
       
-      sightBlockers[0].angle += 1
-      sightBlockers[1].angle -= 2
+      // sightBlockers[0].angle += 1
+      // sightBlockers[1].angle -= 2
       mainCanvasManager.scheduleRender()
       setTimeout(animate, 50)
     }
