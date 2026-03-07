@@ -2,7 +2,7 @@ class CanvasManager {
   constructor(canvas, compositor) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
-
+    
     this.compositor = compositor
 
     this.shadowCanvas = document.createElement('canvas')
@@ -16,6 +16,8 @@ class CanvasManager {
 
     window.addEventListener('resize', () => this.handleResize())
     this.handleResize()
+
+    this.additionalRenderOperations = []
   }
 
   handleResize() {
@@ -36,6 +38,9 @@ class CanvasManager {
     requestAnimationFrame(() => {
       this.renderScheduled = false
       this.compositor.render(this.offsetX, this.offsetY, this.scaleFactor, this.ctx, this.shadowCtx)
+
+      for (const operation of this.additionalRenderOperations)
+        operation()
     })
   }
 
@@ -57,6 +62,10 @@ class CanvasManager {
   getScaleFactor() {
     return this.scaleFactor
   }
+
+  addRenderOperation(operation) {
+    this.additionalRenderOperations.push(operation)
+  }
 }
 
 function initCanvas(canvas, sightProviders, sightBlockers) {
@@ -71,4 +80,6 @@ function initCanvas(canvas, sightProviders, sightBlockers) {
     canvasManager.updateScaleFactor.bind(canvasManager),
     canvasManager.getOffset.bind(canvasManager),
     canvasManager.getScaleFactor.bind(canvasManager))
+
+  return { canvasManager }
 }

@@ -30,8 +30,8 @@
     <h2>Sight Blockers</h2>
     <button id="add-sight-blocker">Add Sight Blocker</button>
     <div>
-      <input id="show-sight-blockers" type="checkbox">
-      <label for="show-sight-blockers">Show Sight Blockers</label>
+      <input id="edit-sight-blockers" type="checkbox">
+      <label for="edit-sight-blockers">Edit Sight Blockers</label>
     </div>
   </div>
 
@@ -45,6 +45,7 @@
   <script src="mouse-handler.js"></script>
   <script src="sight-blocker.js"></script>
   <script src="sight-provider.js"></script>
+  <script src="room-editor.js"></script>
 
   <script>
     const sightProviders = []
@@ -55,7 +56,13 @@
 
     const mainCanvas = document.getElementById('main-canvas')
 
-    initCanvas(mainCanvas, sightProviders, sightBlockers)
+    const { canvasManager } = initCanvas(mainCanvas, sightProviders, sightBlockers)
+
+    const roomEditor = new RoomEditor(canvasManager)
+
+    document.getElementById('edit-sight-blockers').addEventListener('change', (event) => {
+      roomEditor.toggleEditSightBlockers(event.target.checked)
+    })
   </script>
 </body>
 
