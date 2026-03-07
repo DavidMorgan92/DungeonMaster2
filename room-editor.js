@@ -93,7 +93,7 @@ class RoomEditor {
     this.hoveredSightBlocker = null
 
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      if (this.pointInbox(event.offsetX, event.offsetY, {
+      if (this.pointInBox(event.offsetX, event.offsetY, {
         x: blocker.x * scaleFactor + offset.x,
         y: blocker.y * scaleFactor + offset.y,
         width: blocker.width * scaleFactor,
@@ -127,7 +127,7 @@ class RoomEditor {
     const scaleFactor = this.canvasManager.getScaleFactor()
     const offset = this.canvasManager.getOffset()
 
-    if (this.selectedSightBlocker && this.pointInbox(event.offsetX, event.offsetY, {
+    if (this.selectedSightBlocker && this.pointInBox(event.offsetX, event.offsetY, {
       x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 - this.moveIcon.width / 2,
       y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 - this.moveIcon.height / 2,
       width: this.selectedSightBlocker.width * scaleFactor - this.selectedSightBlocker.width * scaleFactor / 2 + this.moveIcon.width / 2,
@@ -146,7 +146,7 @@ class RoomEditor {
     this.mouseHandler.enable()
   }
 
-  pointInbox(x, y, box) {
+  pointInBox(x, y, box) {
     return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height
   }
 }
