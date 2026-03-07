@@ -1,13 +1,16 @@
 class RoomEditor {
-  constructor(canvasManager) {
+  constructor(canvasManager, moveIcon) {
     this.canvasManager = canvasManager
+    this.moveIcon = moveIcon
     this.editSightBlockers = false
 
     this.canvasManager.addRenderOperation(this.renderSightBlockers.bind(this))
 
     this.canvasManager.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
+    this.canvasManager.canvas.addEventListener('click', event => this.handleClick())
 
     this.hoveredSightBlocker = null
+    this.selectedSightBlocker = null
   }
 
   toggleEditSightBlockers(show) {
@@ -34,17 +37,27 @@ class RoomEditor {
         blocker.height * scaleFactor)
     }
 
-    if (this.hoveredSightBlocker) {
-      this.canvasManager.ctx.strokeStyle = 'red'
-      this.canvasManager.ctx.lineWidth = 2
-      this.canvasManager.ctx.strokeRect(
-        this.hoveredSightBlocker.x * scaleFactor + offset.x,
-        this.hoveredSightBlocker.y * scaleFactor + offset.y,
-        this.hoveredSightBlocker.width * scaleFactor,
-        this.hoveredSightBlocker.height * scaleFactor)
+    if (this.hoveredSightBlocker && this.hoveredSightBlocker !== this.selectedSightBlocker)
+      this.renderSightBlockerOutline('red', offset, scaleFactor, this.hoveredSightBlocker)
+
+    if (this.selectedSightBlocker) {
+      this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
+      this.canvasManager.ctx.drawImage(this.moveIcon,
+        (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.moveIcon.width / 2,
+        (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.moveIcon.height / 2)
     }
 
     this.canvasManager.ctx.restore()
+  }
+
+  renderSightBlockerOutline(colour, offset, scaleFactor, sightBlocker) {
+    this.canvasManager.ctx.strokeStyle = colour
+    this.canvasManager.ctx.lineWidth = 2
+    this.canvasManager.ctx.strokeRect(
+      sightBlocker.x * scaleFactor + offset.x,
+      sightBlocker.y * scaleFactor + offset.y,
+      sightBlocker.width * scaleFactor,
+      sightBlocker.height * scaleFactor)
   }
 
   handleMouseMove(event) {
@@ -59,9 +72,9 @@ class RoomEditor {
 
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
       if (event.offsetX >= blocker.x * scaleFactor + offset.x &&
-          event.offsetX <= (blocker.x + blocker.width) * scaleFactor + offset.x &&
-          event.offsetY >= blocker.y * scaleFactor + offset.y &&
-          event.offsetY <= (blocker.y + blocker.height) * scaleFactor + offset.y) {
+        event.offsetX <= (blocker.x + blocker.width) * scaleFactor + offset.x &&
+        event.offsetY >= blocker.y * scaleFactor + offset.y &&
+        event.offsetY <= (blocker.y + blocker.height) * scaleFactor + offset.y) {
         this.hoveredSightBlocker = blocker
         break
       }
@@ -71,5 +84,14 @@ class RoomEditor {
       this.canvasManager.scheduleRender()
 
     this.canvasManager.canvas.style.cursor = this.hoveredSightBlocker ? 'pointer' : 'grab'
+  }
+
+  handleClick() {
+    if (!this.editSightBlockers)
+      return
+
+    this.selectedSightBlocker = this.hoveredSightBlocker
+
+    this.canvasManager.scheduleRender()
   }
 }

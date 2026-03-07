@@ -68,9 +68,7 @@ class CanvasManager {
   }
 }
 
-function initCanvas(canvas, sightProviders, sightBlockers) {
-  const background = document.getElementById('background')
-
+function initCanvas(canvas, backgroundImage, sightProviders, sightBlockers) {
   const backgroundRenderer = new BackgroundRenderer(background)
   const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
   const canvasManager = new CanvasManager(canvas, compositor)

@@ -10,6 +10,7 @@
 
 <body>
   <img id="background" src="test.jpg" hidden>
+  <img id="move-icon" src="move.png" hidden>
 
   <div id="drawer">
     <h1>Dungeon Master</h1>
@@ -30,7 +31,7 @@
     <h2>Sight Blockers</h2>
     <button id="add-sight-blocker">Add Sight Blocker</button>
     <div>
-      <input id="edit-sight-blockers" type="checkbox">
+      <input id="edit-sight-blockers" type="checkbox" checked>
       <label for="edit-sight-blockers">Edit Sight Blockers</label>
     </div>
   </div>
@@ -55,14 +56,20 @@
     ]
 
     const mainCanvas = document.getElementById('main-canvas')
+    const background = document.getElementById('background')
 
-    const { canvasManager } = initCanvas(mainCanvas, sightProviders, sightBlockers)
+    const { canvasManager } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
 
-    const roomEditor = new RoomEditor(canvasManager)
+    const moveIcon = document.getElementById('move-icon')
 
-    document.getElementById('edit-sight-blockers').addEventListener('change', (event) => {
+    const roomEditor = new RoomEditor(canvasManager, moveIcon)
+
+    const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
+    editSightBlockersCheckbox.addEventListener('change', (event) => {
       roomEditor.toggleEditSightBlockers(event.target.checked)
     })
+
+    editSightBlockersCheckbox.dispatchEvent(new Event('change'))
   </script>
 </body>
 
