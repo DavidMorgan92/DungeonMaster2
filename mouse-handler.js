@@ -20,10 +20,12 @@ class MouseHandler {
   }
 
   startDragging() {
+    this.canvas.style.cursor = 'grabbing'
     this.dragging = true
   }
 
   stopDragging() {
+    this.canvas.style.cursor = 'grab'
     this.dragging = false
   }
 
