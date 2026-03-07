@@ -55,11 +55,7 @@
 
     const mainCanvas = document.getElementById('main-canvas')
 
-    const { mouseHandler, canvasManager } = initCanvas(mainCanvas, sightProviders, sightBlockers)
-
-    document.getElementById('show-sight-blockers').addEventListener('change', event => {
-      canvasManager.toggleShowSightBlockers(event.target.checked)
-    })
+    initCanvas(mainCanvas, sightProviders, sightBlockers)
   </script>
 </body>
 
