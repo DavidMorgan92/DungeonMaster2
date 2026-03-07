@@ -35,13 +35,25 @@ class RoomEditor {
     if (!this.editSightBlockers)
       return
 
+    const scaleFactor = this.canvasManager.getScaleFactor()
+    const offset = this.canvasManager.getOffset()
+    
     this.canvasManager.ctx.save()
     this.canvasManager.ctx.globalCompositeOperation = 'source-over'
     this.canvasManager.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)'
 
-    const scaleFactor = this.canvasManager.getScaleFactor()
-    const offset = this.canvasManager.getOffset()
+    this.renderSightBlockersFill(scaleFactor, offset)
+    
+    if (this.hoveredSightBlocker && this.hoveredSightBlocker !== this.selectedSightBlocker)
+      this.renderHoveredSightBlocker(scaleFactor, offset)
 
+    if (this.selectedSightBlocker)
+      this.renderSelectedsightBlocker(scaleFactor, offset)
+
+    this.canvasManager.ctx.restore()
+  }
+
+  renderSightBlockersFill(scaleFactor, offset) {
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
       const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
 
@@ -55,31 +67,30 @@ class RoomEditor {
       this.canvasManager.ctx.closePath()
       this.canvasManager.ctx.fill()
     }
+  }
 
-    if (this.hoveredSightBlocker && this.hoveredSightBlocker !== this.selectedSightBlocker)
-      this.renderSightBlockerOutline('red', offset, scaleFactor, this.hoveredSightBlocker)
+  renderHoveredSightBlocker(scaleFactor, offset) {
+    this.renderSightBlockerOutline('red', offset, scaleFactor, this.hoveredSightBlocker)
+  }
 
-    if (this.selectedSightBlocker) {
-      this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
+  renderSelectedsightBlocker(scaleFactor, offset) {
+    this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
 
-      const centerScreen = CoordinateUtils.worldToScreen({
-        x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
-        y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
-      }, scaleFactor, offset)
+    const centerScreen = CoordinateUtils.worldToScreen({
+      x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
+      y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+    }, scaleFactor, offset)
 
-      this.canvasManager.ctx.drawImage(this.moveIcon,
-        centerScreen.x - this.moveIcon.width / 2,
-        centerScreen.y - this.moveIcon.height / 2)
+    this.canvasManager.ctx.drawImage(this.moveIcon,
+      centerScreen.x - this.moveIcon.width / 2,
+      centerScreen.y - this.moveIcon.height / 2)
 
-      const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
-      const sin = Math.sin(this.selectedSightBlocker.angle * Math.PI / 180)
+    const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
+    const sin = Math.sin(this.selectedSightBlocker.angle * Math.PI / 180)
 
-      this.canvasManager.ctx.drawImage(this.rotateIcon,
-        centerScreen.x - this.rotateIcon.width / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2,
-        centerScreen.y - this.rotateIcon.height / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2)
-    }
-
-    this.canvasManager.ctx.restore()
+    this.canvasManager.ctx.drawImage(this.rotateIcon,
+      centerScreen.x - this.rotateIcon.width / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2,
+      centerScreen.y - this.rotateIcon.height / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2)
   }
 
   renderSightBlockerOutline(colour, offset, scaleFactor, sightBlocker) {
