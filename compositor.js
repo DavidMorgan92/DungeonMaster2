@@ -21,7 +21,9 @@ class Compositor {
 
   renderShadows(offsetX, offsetY, scaleFactor, shadowCtx) {
     shadowCtx.fillStyle = 'darkgray'
+    shadowCtx.clearRect(0, 0, shadowCtx.canvas.width, shadowCtx.canvas.height)
     shadowCtx.fillRect(0, 0, shadowCtx.canvas.width, shadowCtx.canvas.height)
+    shadowCtx.globalCompositeOperation = 'lighten'
 
     for (const provider of this.sightProviders) {
       provider.render(this.sightBlockers)
