@@ -17,6 +17,7 @@ class RoomEditor {
     this.selectedSightBlocker = null
     this.dragging = false
     this.rotating = false
+    this.addingSightBlocker = false
   }
 
   toggleEditSightBlockers(show) {
@@ -112,6 +113,9 @@ class RoomEditor {
 
   handleMouseMove(event) {
     if (!this.editSightBlockers)
+      return
+
+    if (this.addingSightBlocker)
       return
 
     const scaleFactor = this.canvasManager.getScaleFactor()
@@ -214,11 +218,23 @@ class RoomEditor {
 
     this.dragging = false
     this.rotating = false
+    this.addingSightBlocker = false
     this.mouseHandler.enable()
   }
 
   handleMouseLeave() {
     this.dragging = false
     this.rotating = false
+  }
+
+  startAddingSightBlocker() {
+    this.addingSightBlocker = true
+    this.dragging = false
+    this.rotating = false
+    this.hoveredSightBlocker = null
+    this.selectedSightBlocker = null
+    this.canvasManager.scheduleRender()
+    this.canvasManager.canvas.style.cursor = 'crosshair'
+    this.mouseHandler.disable()
   }
 }

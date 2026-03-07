@@ -73,6 +73,10 @@
     })
 
     editSightBlockersCheckbox.dispatchEvent(new Event('change'))
+
+    document.getElementById('add-sight-blocker').addEventListener('click', () => {
+      roomEditor.startAddingSightBlocker()
+    })
   </script>
 </body>
 
