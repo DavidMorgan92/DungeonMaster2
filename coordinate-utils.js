@@ -35,7 +35,6 @@ const CoordinateUtils = {
   },
 
   pointInPolygon(point, polygon) {
-    // Ray-casting algorithm for point-in-polygon (non-zero winding)
     let inside = false
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
       const xi = polygon[i].x
