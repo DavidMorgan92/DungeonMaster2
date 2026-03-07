@@ -293,4 +293,16 @@ class RoomEditor {
     this.canvasManager.canvas.style.cursor = 'crosshair'
     this.mouseHandler.disable()
   }
+
+  deleteSelectedSightBlocker() {
+    if (this.selectedSightBlocker) {
+      const index = this.canvasManager.compositor.sightBlockers.indexOf(this.selectedSightBlocker)
+
+      if (index > -1) {
+        this.canvasManager.compositor.sightBlockers.splice(index, 1)
+        this.selectedSightBlocker = null
+        this.canvasManager.scheduleRender()
+      }
+    }
+  }
 }

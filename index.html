@@ -31,6 +31,7 @@
 
     <h2>Sight Blockers</h2>
     <button id="add-sight-blocker">Add Sight Blocker</button>
+    <button id="delete-selected-sight-blocker">Delete Selected Sight Blocker</button>
     <div>
       <input id="edit-sight-blockers" type="checkbox" checked>
       <label for="edit-sight-blockers">Edit Sight Blockers</label>
@@ -76,6 +77,10 @@
 
     document.getElementById('add-sight-blocker').addEventListener('click', () => {
       roomEditor.startAddingSightBlocker()
+    })
+
+    document.getElementById('delete-selected-sight-blocker').addEventListener('click', () => {
+      roomEditor.deleteSelectedSightBlocker()
     })
   </script>
 </body>
