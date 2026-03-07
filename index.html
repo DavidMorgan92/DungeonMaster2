@@ -11,6 +11,7 @@
 <body>
   <img id="background" src="test.jpg" hidden>
   <img id="move-icon" src="move.png" hidden>
+  <img id="rotate-icon" src="rotate.png" hidden>
 
   <div id="drawer">
     <h1>Dungeon Master</h1>
@@ -51,8 +52,8 @@
   <script>
     const sightProviders = []
     const sightBlockers = [
-      new SightBlocker(200, 200, 100, 100),
-      new SightBlocker(400, 300, 150, 150),
+      new SightBlocker(200, 200, 100, 100, 20),
+      new SightBlocker(400, 300, 150, 150, 45),
     ]
 
     const mainCanvas = document.getElementById('main-canvas')
@@ -61,8 +62,9 @@
     const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
 
     const moveIcon = document.getElementById('move-icon')
+    const rotateIcon = document.getElementById('rotate-icon')
 
-    const roomEditor = new RoomEditor(canvasManager, moveIcon, mouseHandler)
+    const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
 
     const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
     editSightBlockersCheckbox.addEventListener('change', (event) => {

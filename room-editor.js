@@ -1,7 +1,8 @@
 class RoomEditor {
-  constructor(canvasManager, moveIcon, mouseHandler) {
+  constructor(canvasManager, moveIcon, rotateIcon, mouseHandler) {
     this.canvasManager = canvasManager
     this.moveIcon = moveIcon
+    this.rotateIcon = rotateIcon
     this.mouseHandler = mouseHandler
     this.editSightBlockers = false
 
@@ -14,6 +15,7 @@ class RoomEditor {
     this.hoveredSightBlocker = null
     this.selectedSightBlocker = null
     this.dragging = false
+    this.rotating = false
   }
 
   toggleEditSightBlockers(show) {
@@ -33,11 +35,15 @@ class RoomEditor {
     const offset = this.canvasManager.getOffset()
 
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      this.canvasManager.ctx.fillRect(
-        blocker.x * scaleFactor + offset.x,
-        blocker.y * scaleFactor + offset.y,
-        blocker.width * scaleFactor,
-        blocker.height * scaleFactor)
+      const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
+
+      this.canvasManager.ctx.beginPath()
+      this.canvasManager.ctx.moveTo(corners[0].x * scaleFactor + offset.x, corners[0].y * scaleFactor + offset.y)
+      for (let i = 1; i < corners.length; i++) {
+        this.canvasManager.ctx.lineTo(corners[i].x * scaleFactor + offset.x, corners[i].y * scaleFactor + offset.y)
+      }
+      this.canvasManager.ctx.closePath()
+      this.canvasManager.ctx.fill()
     }
 
     if (this.hoveredSightBlocker && this.hoveredSightBlocker !== this.selectedSightBlocker)
@@ -45,22 +51,32 @@ class RoomEditor {
 
     if (this.selectedSightBlocker) {
       this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
+      
       this.canvasManager.ctx.drawImage(this.moveIcon,
         (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.moveIcon.width / 2,
         (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.moveIcon.height / 2)
+
+      this.canvasManager.ctx.drawImage(this.rotateIcon,
+        (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.rotateIcon.width / 2,
+        (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.rotateIcon.height / 2)
     }
 
     this.canvasManager.ctx.restore()
   }
 
   renderSightBlockerOutline(colour, offset, scaleFactor, sightBlocker) {
+    const corners = sightBlocker.getCorners(-sightBlocker.width / 2, -sightBlocker.height / 2)
+
     this.canvasManager.ctx.strokeStyle = colour
     this.canvasManager.ctx.lineWidth = 2
-    this.canvasManager.ctx.strokeRect(
-      sightBlocker.x * scaleFactor + offset.x,
-      sightBlocker.y * scaleFactor + offset.y,
-      sightBlocker.width * scaleFactor,
-      sightBlocker.height * scaleFactor)
+
+    this.canvasManager.ctx.beginPath()
+    this.canvasManager.ctx.moveTo(corners[0].x * scaleFactor + offset.x, corners[0].y * scaleFactor + offset.y)
+    for (let i = 1; i < corners.length; i++) {
+      this.canvasManager.ctx.lineTo(corners[i].x * scaleFactor + offset.x, corners[i].y * scaleFactor + offset.y)
+    }
+    this.canvasManager.ctx.closePath()
+    this.canvasManager.ctx.stroke()
   }
 
   handleMouseMove(event) {
