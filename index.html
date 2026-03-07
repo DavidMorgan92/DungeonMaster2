@@ -58,11 +58,11 @@
     const mainCanvas = document.getElementById('main-canvas')
     const background = document.getElementById('background')
 
-    const { canvasManager } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
+    const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
 
     const moveIcon = document.getElementById('move-icon')
 
-    const roomEditor = new RoomEditor(canvasManager, moveIcon)
+    const roomEditor = new RoomEditor(canvasManager, moveIcon, mouseHandler)
 
     const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
     editSightBlockersCheckbox.addEventListener('change', (event) => {

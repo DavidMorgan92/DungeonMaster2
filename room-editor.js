@@ -1,16 +1,19 @@
 class RoomEditor {
-  constructor(canvasManager, moveIcon) {
+  constructor(canvasManager, moveIcon, mouseHandler) {
     this.canvasManager = canvasManager
     this.moveIcon = moveIcon
+    this.mouseHandler = mouseHandler
     this.editSightBlockers = false
 
     this.canvasManager.addRenderOperation(this.renderSightBlockers.bind(this))
 
     this.canvasManager.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
-    this.canvasManager.canvas.addEventListener('click', event => this.handleClick())
+    this.canvasManager.canvas.addEventListener('mousedown', event => this.handleMouseDown(event))
+    this.canvasManager.canvas.addEventListener('mouseup', () => this.handleMouseUp())
 
     this.hoveredSightBlocker = null
     this.selectedSightBlocker = null
+    this.dragging = false
   }
 
   toggleEditSightBlockers(show) {
@@ -71,10 +74,12 @@ class RoomEditor {
     this.hoveredSightBlocker = null
 
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      if (event.offsetX >= blocker.x * scaleFactor + offset.x &&
-        event.offsetX <= (blocker.x + blocker.width) * scaleFactor + offset.x &&
-        event.offsetY >= blocker.y * scaleFactor + offset.y &&
-        event.offsetY <= (blocker.y + blocker.height) * scaleFactor + offset.y) {
+      if (this.pointInbox(event.offsetX, event.offsetY, {
+        x: blocker.x * scaleFactor + offset.x,
+        y: blocker.y * scaleFactor + offset.y,
+        width: blocker.width * scaleFactor,
+        height: blocker.height * scaleFactor,
+      })) {
         this.hoveredSightBlocker = blocker
         break
       }
@@ -84,14 +89,45 @@ class RoomEditor {
       this.canvasManager.scheduleRender()
 
     this.canvasManager.canvas.style.cursor = this.hoveredSightBlocker ? 'pointer' : 'grab'
+
+    if (this.dragging && this.selectedSightBlocker) {
+      this.selectedSightBlocker.x = (event.offsetX - offset.x) / scaleFactor - this.selectedSightBlocker.width / 2
+      this.selectedSightBlocker.y = (event.offsetY - offset.y) / scaleFactor - this.selectedSightBlocker.height / 2
+      this.canvasManager.scheduleRender()
+    }
   }
 
-  handleClick() {
+  handleMouseDown(event) {
     if (!this.editSightBlockers)
       return
 
     this.selectedSightBlocker = this.hoveredSightBlocker
 
     this.canvasManager.scheduleRender()
+
+    const scaleFactor = this.canvasManager.getScaleFactor()
+    const offset = this.canvasManager.getOffset()
+
+    if (this.selectedSightBlocker && this.pointInbox(event.offsetX, event.offsetY, {
+      x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 - this.moveIcon.width / 2,
+      y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 - this.moveIcon.height / 2,
+      width: this.selectedSightBlocker.width * scaleFactor - this.selectedSightBlocker.width * scaleFactor / 2 + this.moveIcon.width / 2,
+      height: this.selectedSightBlocker.height * scaleFactor - this.selectedSightBlocker.height * scaleFactor / 2 + this.moveIcon.height / 2,
+    })) {
+      this.dragging = true
+      this.mouseHandler.disable()
+    }
+  }
+
+  handleMouseUp() {
+    if (!this.editSightBlockers)
+      return
+
+    this.dragging = false
+    this.mouseHandler.enable()
+  }
+
+  pointInbox(x, y, box) {
+    return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height
   }
 }

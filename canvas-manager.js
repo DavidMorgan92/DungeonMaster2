@@ -68,16 +68,16 @@ class CanvasManager {
   }
 }
 
-function initCanvas(canvas, backgroundImage, sightProviders, sightBlockers) {
+function initCanvas(canvas, background, sightProviders, sightBlockers) {
   const backgroundRenderer = new BackgroundRenderer(background)
   const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
   const canvasManager = new CanvasManager(canvas, compositor)
   
-  new MouseHandler(canvas,
+  const mouseHandler = new MouseHandler(canvas,
     canvasManager.updateOffset.bind(canvasManager),
     canvasManager.updateScaleFactor.bind(canvasManager),
     canvasManager.getOffset.bind(canvasManager),
     canvasManager.getScaleFactor.bind(canvasManager))
 
-  return { canvasManager }
+  return { canvasManager, mouseHandler }
 }

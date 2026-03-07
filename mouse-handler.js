@@ -17,19 +17,39 @@ class MouseHandler {
     this.canvas.addEventListener('mouseleave', () => this.stopDragging())
     this.canvas.addEventListener('mousemove', event => this.scroll(event))
     this.canvas.addEventListener('wheel', event => this.zoom(event), { passive: false })
+
+    this.enabled = false
+  }
+
+  enable() {
+    this.enabled = true
+  }
+
+  disable() {
+    this.enabled = false
+    this.dragging = false
   }
 
   startDragging() {
+    if (!this.enabled)
+      return
+
     this.canvas.style.cursor = 'grabbing'
     this.dragging = true
   }
 
   stopDragging() {
+    if (!this.enabled)
+      return
+
     this.canvas.style.cursor = 'grab'
     this.dragging = false
   }
 
   scroll(event) {
+    if (!this.enabled)
+      return
+
     if (this.lastMouseX === undefined) {
       this.lastMouseX = event.offsetX
       this.lastMouseY = event.offsetY
@@ -48,6 +68,9 @@ class MouseHandler {
   }
 
   zoom(event) {
+    if (!this.enabled)
+      return
+
     event.preventDefault()
     const prevScale = this.getScaleFactor()
     const zoomIntensity = 0.0015
