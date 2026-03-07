@@ -30,19 +30,25 @@
   <script src="canvas-manager.js"></script>
   <script src="compositor.js"></script>
   <script src="mouse-handler.js"></script>
+  <script src="sight-blocker.js"></script>
   <script src="sight-provider.js"></script>
 
   <script>
     const sightProviders = [
       new SightProvider(400, 300, 150),
-      new SightProvider(600, 500, 100),
+      new SightProvider(550, 450, 100),
+    ]
+
+    const sightBlockers = [
+      new SightBlocker(450, 350, 100, 50, 20),
+      new SightBlocker(500, 400, 50, 100, 0),
     ]
 
     const mainCanvas = document.getElementById('main-canvas')
     const background = document.getElementById('background')
 
     const backgroundRenderer = new BackgroundRenderer(background)
-    const compositor = new Compositor(backgroundRenderer, sightProviders)
+    const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
     const mainCanvasManager = new CanvasManager(mainCanvas, compositor)
     const mouseHandler = new MouseHandler(mainCanvas,
       (offsetX, offsetY) => mainCanvasManager.updateOffset(offsetX, offsetY),
