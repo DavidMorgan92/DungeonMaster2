@@ -5,6 +5,7 @@ class MouseHandler {
     this.updateScaleFactor = updateScaleFactor
     this.getOffset = getOffset
     this.getScaleFactor = getScaleFactor
+    this.enabled = true
 
     this.dragging = false
     this.lastMouseX = undefined
@@ -19,17 +20,35 @@ class MouseHandler {
     this.canvas.addEventListener('wheel', event => this.zoom(event), { passive: false })
   }
 
+  enable() {
+    this.enabled = true
+    this.canvas.style.cursor = 'grab'
+  }
+  
+  disable() {
+    this.enabled = false
+  }
+
   startDragging() {
+    if (!this.enabled)
+      return
+
     this.canvas.style.cursor = 'grabbing'
     this.dragging = true
   }
 
   stopDragging() {
+    if (!this.enabled)
+      return
+
     this.canvas.style.cursor = 'grab'
     this.dragging = false
   }
 
   scroll(event) {
+    if (!this.enabled)
+      return
+
     if (this.lastMouseX === undefined) {
       this.lastMouseX = event.offsetX
       this.lastMouseY = event.offsetY
@@ -48,6 +67,9 @@ class MouseHandler {
   }
 
   zoom(event) {
+    if (!this.enabled)
+      return
+
     event.preventDefault()
     const prevScale = this.getScaleFactor()
     const zoomIntensity = 0.0015

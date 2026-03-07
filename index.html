@@ -14,6 +14,7 @@
   <div id="drawer">
     <h1>Dungeon Master</h1>
 
+    <h2>Heroes</h2>
     <select id="heroes" size="5">
       <option value="hero1">Hero 1</option>
       <option value="hero2">Hero 2</option>
@@ -24,6 +25,13 @@
     <div id="hero-controls">
       <button id="add-hero">Add Hero</button>
       <button id="remove-hero">Remove Hero</button>
+    </div>
+
+    <h2>Sight Blockers</h2>
+    <button id="add-sight-blocker">Add Sight Blocker</button>
+    <div>
+      <input id="show-sight-blockers" type="checkbox">
+      <label for="show-sight-blockers">Show Sight Blockers</label>
     </div>
   </div>
 
@@ -40,23 +48,18 @@
 
   <script>
     const sightProviders = []
-    const sightBlockers = []
+    const sightBlockers = [
+      new SightBlocker(200, 200, 100, 100),
+      new SightBlocker(400, 300, 150, 150),
+    ]
 
-    initCanvas()
+    const mainCanvas = document.getElementById('main-canvas')
 
-    function initCanvas() {
-      const mainCanvas = document.getElementById('main-canvas')
-      const background = document.getElementById('background')
+    const { mouseHandler, canvasManager } = initCanvas(mainCanvas, sightProviders, sightBlockers)
 
-      const backgroundRenderer = new BackgroundRenderer(background)
-      const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
-      const mainCanvasManager = new CanvasManager(mainCanvas, compositor)
-      const mouseHandler = new MouseHandler(mainCanvas,
-        (offsetX, offsetY) => mainCanvasManager.updateOffset(offsetX, offsetY),
-        newScaleFactor => mainCanvasManager.updateScaleFactor(newScaleFactor),
-        () => mainCanvasManager.getOffset(),
-        () => mainCanvasManager.getScaleFactor())
-    }
+    document.getElementById('show-sight-blockers').addEventListener('change', event => {
+      canvasManager.toggleShowSightBlockers(event.target.checked)
+    })
   </script>
 </body>
 

@@ -36,7 +36,7 @@ body {
   cursor: grab;
 }
 
-h1 {
+h1, h2 {
   margin: 0;
   text-align: center;
 }
