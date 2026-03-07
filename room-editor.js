@@ -18,6 +18,7 @@ class RoomEditor {
     this.dragging = false
     this.rotating = false
     this.addingSightBlocker = false
+    this.addingSightBlockerRect = undefined
   }
 
   toggleEditSightBlockers(show) {
@@ -30,6 +31,9 @@ class RoomEditor {
       this.dragging = false
       this.rotating = false
       this.addingSightBlocker = false
+      this.addingSightBlockerRect = undefined
+      this.canvasManager.canvas.style.cursor = 'grab'
+      this.mouseHandler.enable()
     }
   }
 
@@ -39,18 +43,21 @@ class RoomEditor {
 
     const scaleFactor = this.canvasManager.getScaleFactor()
     const offset = this.canvasManager.getOffset()
-    
+
     this.canvasManager.ctx.save()
     this.canvasManager.ctx.globalCompositeOperation = 'source-over'
     this.canvasManager.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)'
 
     this.renderSightBlockers(scaleFactor, offset)
-    
+
     if (this.hoveredSightBlocker && this.hoveredSightBlocker !== this.selectedSightBlocker)
       this.renderHoveredSightBlocker(scaleFactor, offset)
 
     if (this.selectedSightBlocker)
       this.renderSelectedSightBlocker(scaleFactor, offset)
+
+    if (this.addingSightBlocker && this.addingSightBlockerRect)
+      this.renderAddingSightBlocker(scaleFactor, offset)
 
     this.canvasManager.ctx.restore()
   }
@@ -95,6 +102,11 @@ class RoomEditor {
       centerScreen.y - this.rotateIcon.height / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2)
   }
 
+  renderAddingSightBlocker(scaleFactor, offset) {
+    const rect = CoordinateUtils.worldRectToScreen(this.addingSightBlockerRect, scaleFactor, offset)
+    this.canvasManager.ctx.fillRect(rect.x, rect.y, rect.width, rect.height)
+  }
+
   renderSightBlockerOutline(colour, offset, scaleFactor, sightBlocker) {
     const corners = sightBlocker.getCorners(-sightBlocker.width / 2, -sightBlocker.height / 2)
 
@@ -116,11 +128,30 @@ class RoomEditor {
     if (!this.editSightBlockers)
       return
 
-    if (this.addingSightBlocker)
-      return
-
     const scaleFactor = this.canvasManager.getScaleFactor()
     const offset = this.canvasManager.getOffset()
+
+    if (this.addingSightBlocker) {
+      if (this.addingSightBlockerRect) {
+          const worldEventOffset = CoordinateUtils.screenToWorld({ x: event.offsetX, y: event.offsetY }, scaleFactor, offset)
+    
+          if (worldEventOffset.x <= this.addingSightBlockerRect.x) {
+            this.addingSightBlockerRect.x = worldEventOffset.x
+          } else {
+            this.addingSightBlockerRect.width = worldEventOffset.x - this.addingSightBlockerRect.x
+          }
+    
+          if (worldEventOffset.y <= this.addingSightBlockerRect.y) {
+            this.addingSightBlockerRect.y = worldEventOffset.y
+          } else {
+            this.addingSightBlockerRect.height = worldEventOffset.y - this.addingSightBlockerRect.y
+          }
+    
+          this.canvasManager.scheduleRender()
+      }
+
+      return
+    }
 
     if (!this.dragging && !this.rotating) {
       const prevHovered = this.hoveredSightBlocker
@@ -166,13 +197,24 @@ class RoomEditor {
     if (!this.editSightBlockers)
       return
 
+    const scaleFactor = this.canvasManager.getScaleFactor()
+    const offset = this.canvasManager.getOffset()
+
+    if (this.addingSightBlocker) {
+      const worldEventOffset = CoordinateUtils.screenToWorld({ x: event.offsetX, y: event.offsetY }, scaleFactor, offset)
+
+      this.addingSightBlockerRect = {
+        x: worldEventOffset.x,
+        y: worldEventOffset.y,
+        width: 0,
+        height: 0,
+      }
+    }
+
     if (this.hoveredSightBlocker)
       this.selectedSightBlocker = this.hoveredSightBlocker
 
     this.canvasManager.scheduleRender()
-
-    const scaleFactor = this.canvasManager.getScaleFactor()
-    const offset = this.canvasManager.getOffset()
 
     if (this.selectedSightBlocker) {
       const centerScreen = CoordinateUtils.worldToScreen({
@@ -219,8 +261,21 @@ class RoomEditor {
 
     this.dragging = false
     this.rotating = false
-    this.addingSightBlocker = false
     this.mouseHandler.enable()
+
+    if (this.addingSightBlocker && this.addingSightBlockerRect && this.addingSightBlockerRect.width > 0 && this.addingSightBlockerRect.height > 0) {
+      this.canvasManager.compositor.sightBlockers.push(new SightBlocker(
+        this.addingSightBlockerRect.x,
+        this.addingSightBlockerRect.y,
+        this.addingSightBlockerRect.width,
+        this.addingSightBlockerRect.height,
+        0
+      ))
+
+      this.addingSightBlocker = false
+      this.addingSightBlockerRect = undefined
+      this.canvasManager.scheduleRender()
+    }
   }
 
   handleMouseLeave() {
