@@ -62,7 +62,7 @@ class RoomEditor {
 
   renderSightBlockers(scaleFactor, offset) {
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
+      const corners = blocker.getCorners(0, 0)
 
       this.canvasManager.ctx.beginPath()
       const firstPos = CoordinateUtils.worldToScreen(corners[0], scaleFactor, offset)
@@ -84,8 +84,8 @@ class RoomEditor {
     this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
 
     const centerScreen = CoordinateUtils.worldToScreen({
-      x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
-      y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+      x: this.selectedSightBlocker.x,
+      y: this.selectedSightBlocker.y,
     }, scaleFactor, offset)
 
     this.canvasManager.ctx.drawImage(this.moveIcon,
@@ -106,7 +106,7 @@ class RoomEditor {
   }
 
   renderSightBlockerOutline(colour, offset, scaleFactor, sightBlocker) {
-    const corners = sightBlocker.getCorners(-sightBlocker.width / 2, -sightBlocker.height / 2)
+    const corners = sightBlocker.getCorners(0, 0)
 
     this.canvasManager.ctx.strokeStyle = colour
     this.canvasManager.ctx.lineWidth = 2
@@ -156,7 +156,7 @@ class RoomEditor {
       this.hoveredSightBlocker = null
 
       for (const blocker of this.canvasManager.compositor.sightBlockers) {
-        const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
+        const corners = blocker.getCorners(0, 0)
         const screenCorners = corners.map(corner => CoordinateUtils.worldToScreen(corner, scaleFactor, offset))
 
         if (CoordinateUtils.pointInPolygon({ x: event.offsetX, y: event.offsetY }, screenCorners)) {
@@ -174,14 +174,14 @@ class RoomEditor {
     if (this.selectedSightBlocker) {
       if (this.dragging) {
         const worldPoint = CoordinateUtils.screenToWorld({ x: event.offsetX, y: event.offsetY }, scaleFactor, offset)
-        this.selectedSightBlocker.x = worldPoint.x - this.selectedSightBlocker.width / 2
-        this.selectedSightBlocker.y = worldPoint.y - this.selectedSightBlocker.height / 2
+        this.selectedSightBlocker.x = worldPoint.x
+        this.selectedSightBlocker.y = worldPoint.y
         this.canvasManager.scheduleRender()
         this.canvasManager.canvas.style.cursor = 'grabbing'
       } else if (this.rotating) {
         const centerScreen = CoordinateUtils.worldToScreen({
-          x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
-          y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+          x: this.selectedSightBlocker.x,
+          y: this.selectedSightBlocker.y,
         }, scaleFactor, offset)
         const angle = Math.atan2(event.offsetY - centerScreen.y, event.offsetX - centerScreen.x) * 180 / Math.PI
         this.selectedSightBlocker.angle = angle
@@ -216,8 +216,8 @@ class RoomEditor {
 
     if (this.selectedSightBlocker) {
       const centerScreen = CoordinateUtils.worldToScreen({
-        x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
-        y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+        x: this.selectedSightBlocker.x,
+        y: this.selectedSightBlocker.y,
       }, scaleFactor, offset)
 
       const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
