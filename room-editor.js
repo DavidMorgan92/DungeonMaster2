@@ -109,10 +109,18 @@ class RoomEditor {
 
     this.canvasManager.canvas.style.cursor = this.hoveredSightBlocker ? 'pointer' : 'grab'
 
-    if (this.dragging && this.selectedSightBlocker) {
-      this.selectedSightBlocker.x = (event.offsetX - offset.x) / scaleFactor - this.selectedSightBlocker.width / 2
-      this.selectedSightBlocker.y = (event.offsetY - offset.y) / scaleFactor - this.selectedSightBlocker.height / 2
-      this.canvasManager.scheduleRender()
+    if (this.selectedSightBlocker) {
+      if (this.dragging) {
+        this.selectedSightBlocker.x = (event.offsetX - offset.x) / scaleFactor - this.selectedSightBlocker.width / 2
+        this.selectedSightBlocker.y = (event.offsetY - offset.y) / scaleFactor - this.selectedSightBlocker.height / 2
+        this.canvasManager.scheduleRender()
+      } else if (this.rotating) {
+        const centerX = (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x
+        const centerY = (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y
+        const angle = Math.atan2(event.offsetY - centerY, event.offsetX - centerX) * 180 / Math.PI
+        this.selectedSightBlocker.angle = angle
+        this.canvasManager.scheduleRender()
+      }
     }
   }
 
@@ -126,15 +134,28 @@ class RoomEditor {
 
     const scaleFactor = this.canvasManager.getScaleFactor()
     const offset = this.canvasManager.getOffset()
+    
+    if (this.selectedSightBlocker) {
+      const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
+      const sin = Math.sin(this.selectedSightBlocker.angle * Math.PI / 180)
 
-    if (this.selectedSightBlocker && this.pointInBox(event.offsetX, event.offsetY, {
-      x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 - this.moveIcon.width / 2,
-      y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 - this.moveIcon.height / 2,
-      width: this.selectedSightBlocker.width * scaleFactor - this.selectedSightBlocker.width * scaleFactor / 2 + this.moveIcon.width / 2,
-      height: this.selectedSightBlocker.height * scaleFactor - this.selectedSightBlocker.height * scaleFactor / 2 + this.moveIcon.height / 2,
-    })) {
-      this.dragging = true
-      this.mouseHandler.disable()
+      if (this.pointInBox(event.offsetX, event.offsetY, {
+        x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 - this.moveIcon.width / 2,
+        y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 - this.moveIcon.height / 2,
+        width: this.moveIcon.width,
+        height: this.moveIcon.height,
+      })) {
+        this.dragging = true
+        this.mouseHandler.disable()
+      } else if (this.pointInBox(event.offsetX, event.offsetY, {
+        x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2 - this.rotateIcon.width / 2,
+        y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2 - this.rotateIcon.height / 2,
+        width: this.rotateIcon.width,
+        height: this.rotateIcon.height,
+      })) {
+        this.rotating = true
+        this.mouseHandler.disable()
+      }
     }
   }
 
@@ -143,6 +164,7 @@ class RoomEditor {
       return
 
     this.dragging = false
+    this.rotating = false
     this.mouseHandler.enable()
   }
 
