@@ -34,12 +34,12 @@
     </div>
 
     <h2>Sight Blockers</h2>
-    <button id="add-sight-blocker">Add Sight Blocker</button>
-    <button id="delete-selected-sight-blocker">Delete Selected Sight Blocker</button>
     <div>
       <input id="edit-sight-blockers" type="checkbox" checked>
       <label for="edit-sight-blockers">Edit Sight Blockers</label>
     </div>
+    <button id="add-sight-blocker">Add Sight Blocker</button>
+    <button id="delete-selected-sight-blocker">Delete Selected Sight Blocker</button>
   </div>
 
   <div id="main-canvas-container">
@@ -75,19 +75,18 @@
       const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
   
       const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
+      const addSightBlockerButton = document.getElementById('add-sight-blocker')
+      const deleteSelectedSightBlockerButton = document.getElementById('delete-selected-sight-blocker')
+
       editSightBlockersCheckbox.addEventListener('change', (event) => {
         roomEditor.toggleEditSightBlockers(event.target.checked)
+        addSightBlockerButton.disabled = !event.target.checked
+        deleteSelectedSightBlockerButton.disabled = !event.target.checked
       })
-  
+
+      addSightBlockerButton.addEventListener('click', () => roomEditor.startAddingSightBlocker())
+      deleteSelectedSightBlockerButton.addEventListener('click', () => roomEditor.deleteSelectedSightBlocker())
       editSightBlockersCheckbox.dispatchEvent(new Event('change'))
-  
-      document.getElementById('add-sight-blocker').addEventListener('click', () => {
-        roomEditor.startAddingSightBlocker()
-      })
-  
-      document.getElementById('delete-selected-sight-blocker').addEventListener('click', () => {
-        roomEditor.deleteSelectedSightBlocker()
-      })
   
       const roomSerializer = new RoomSerializer(sightBlockers)
   

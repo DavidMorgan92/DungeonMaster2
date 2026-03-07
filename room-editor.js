@@ -282,6 +282,9 @@ class RoomEditor {
   }
 
   startAddingSightBlocker() {
+    if (!this.editSightBlockers)
+      return
+
     this.addingSightBlocker = true
     this.dragging = false
     this.rotating = false
