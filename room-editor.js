@@ -136,13 +136,14 @@ class RoomEditor {
     if (!this.editSightBlockers)
       return
 
-    this.selectedSightBlocker = this.hoveredSightBlocker
+    if (this.hoveredSightBlocker)
+      this.selectedSightBlocker = this.hoveredSightBlocker
 
     this.canvasManager.scheduleRender()
 
     const scaleFactor = this.canvasManager.getScaleFactor()
     const offset = this.canvasManager.getOffset()
-    
+
     if (this.selectedSightBlocker) {
       const centerScreen = CoordinateUtils.worldToScreen({
         x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
@@ -163,10 +164,13 @@ class RoomEditor {
         this.dragging = true
         this.mouseHandler.disable()
       } else {
-        const radius = (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2
+        const rotateRadius = (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2
+        const rotateIconScreenX = centerScreen.x - this.rotateIcon.width / 2 + cos * rotateRadius
+        const rotateIconScreenY = centerScreen.y - this.rotateIcon.height / 2 + sin * rotateRadius
+
         const rotateIconRect = {
-          x: centerScreen.x - this.rotateIcon.width / 2 + cos * radius,
-          y: centerScreen.y - this.rotateIcon.height / 2 + sin * radius,
+          x: rotateIconScreenX,
+          y: rotateIconScreenY,
           width: this.rotateIcon.width,
           height: this.rotateIcon.height,
         }
@@ -187,5 +191,4 @@ class RoomEditor {
     this.rotating = false
     this.mouseHandler.enable()
   }
-
 }
