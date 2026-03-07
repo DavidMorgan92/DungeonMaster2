@@ -38,9 +38,11 @@ class RoomEditor {
       const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
 
       this.canvasManager.ctx.beginPath()
-      this.canvasManager.ctx.moveTo(corners[0].x * scaleFactor + offset.x, corners[0].y * scaleFactor + offset.y)
+      const firstPos = CoordinateUtils.worldToScreen(corners[0], scaleFactor, offset)
+      this.canvasManager.ctx.moveTo(firstPos.x, firstPos.y)
       for (let i = 1; i < corners.length; i++) {
-        this.canvasManager.ctx.lineTo(corners[i].x * scaleFactor + offset.x, corners[i].y * scaleFactor + offset.y)
+        const screenPos = CoordinateUtils.worldToScreen(corners[i], scaleFactor, offset)
+        this.canvasManager.ctx.lineTo(screenPos.x, screenPos.y)
       }
       this.canvasManager.ctx.closePath()
       this.canvasManager.ctx.fill()
@@ -52,16 +54,21 @@ class RoomEditor {
     if (this.selectedSightBlocker) {
       this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
 
+      const centerScreen = CoordinateUtils.worldToScreen({
+        x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
+        y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+      }, scaleFactor, offset)
+
       this.canvasManager.ctx.drawImage(this.moveIcon,
-        (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.moveIcon.width / 2,
-        (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.moveIcon.height / 2)
+        centerScreen.x - this.moveIcon.width / 2,
+        centerScreen.y - this.moveIcon.height / 2)
 
       const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
       const sin = Math.sin(this.selectedSightBlocker.angle * Math.PI / 180)
 
       this.canvasManager.ctx.drawImage(this.rotateIcon,
-        (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.rotateIcon.width / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2,
-        (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.rotateIcon.height / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2)
+        centerScreen.x - this.rotateIcon.width / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2,
+        centerScreen.y - this.rotateIcon.height / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2)
     }
 
     this.canvasManager.ctx.restore()
@@ -74,9 +81,11 @@ class RoomEditor {
     this.canvasManager.ctx.lineWidth = 2
 
     this.canvasManager.ctx.beginPath()
-    this.canvasManager.ctx.moveTo(corners[0].x * scaleFactor + offset.x, corners[0].y * scaleFactor + offset.y)
+    const firstPos = CoordinateUtils.worldToScreen(corners[0], scaleFactor, offset)
+    this.canvasManager.ctx.moveTo(firstPos.x, firstPos.y)
     for (let i = 1; i < corners.length; i++) {
-      this.canvasManager.ctx.lineTo(corners[i].x * scaleFactor + offset.x, corners[i].y * scaleFactor + offset.y)
+      const screenPos = CoordinateUtils.worldToScreen(corners[i], scaleFactor, offset)
+      this.canvasManager.ctx.lineTo(screenPos.x, screenPos.y)
     }
     this.canvasManager.ctx.closePath()
     this.canvasManager.ctx.stroke()
@@ -93,12 +102,8 @@ class RoomEditor {
     this.hoveredSightBlocker = null
 
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      if (this.pointInBox(event.offsetX, event.offsetY, {
-        x: blocker.x * scaleFactor + offset.x,
-        y: blocker.y * scaleFactor + offset.y,
-        width: blocker.width * scaleFactor,
-        height: blocker.height * scaleFactor,
-      })) {
+      const screenRect = CoordinateUtils.worldRectToScreen(blocker, scaleFactor, offset)
+      if (CoordinateUtils.pointInRect({ x: event.offsetX, y: event.offsetY }, screenRect)) {
         this.hoveredSightBlocker = blocker
         break
       }
@@ -111,13 +116,16 @@ class RoomEditor {
 
     if (this.selectedSightBlocker) {
       if (this.dragging) {
-        this.selectedSightBlocker.x = (event.offsetX - offset.x) / scaleFactor - this.selectedSightBlocker.width / 2
-        this.selectedSightBlocker.y = (event.offsetY - offset.y) / scaleFactor - this.selectedSightBlocker.height / 2
+        const worldPoint = CoordinateUtils.screenToWorld({ x: event.offsetX, y: event.offsetY }, scaleFactor, offset)
+        this.selectedSightBlocker.x = worldPoint.x - this.selectedSightBlocker.width / 2
+        this.selectedSightBlocker.y = worldPoint.y - this.selectedSightBlocker.height / 2
         this.canvasManager.scheduleRender()
       } else if (this.rotating) {
-        const centerX = (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x
-        const centerY = (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y
-        const angle = Math.atan2(event.offsetY - centerY, event.offsetX - centerX) * 180 / Math.PI
+        const centerScreen = CoordinateUtils.worldToScreen({
+          x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
+          y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+        }, scaleFactor, offset)
+        const angle = Math.atan2(event.offsetY - centerScreen.y, event.offsetX - centerScreen.x) * 180 / Math.PI
         this.selectedSightBlocker.angle = angle
         this.canvasManager.scheduleRender()
       }
@@ -136,25 +144,37 @@ class RoomEditor {
     const offset = this.canvasManager.getOffset()
     
     if (this.selectedSightBlocker) {
+      const centerScreen = CoordinateUtils.worldToScreen({
+        x: this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2,
+        y: this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2,
+      }, scaleFactor, offset)
+
       const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
       const sin = Math.sin(this.selectedSightBlocker.angle * Math.PI / 180)
 
-      if (this.pointInBox(event.offsetX, event.offsetY, {
-        x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 - this.moveIcon.width / 2,
-        y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 - this.moveIcon.height / 2,
+      const moveIconRect = {
+        x: centerScreen.x - this.moveIcon.width / 2,
+        y: centerScreen.y - this.moveIcon.height / 2,
         width: this.moveIcon.width,
         height: this.moveIcon.height,
-      })) {
+      }
+
+      if (CoordinateUtils.pointInRect({ x: event.offsetX, y: event.offsetY }, moveIconRect)) {
         this.dragging = true
         this.mouseHandler.disable()
-      } else if (this.pointInBox(event.offsetX, event.offsetY, {
-        x: this.selectedSightBlocker.x * scaleFactor + offset.x + this.selectedSightBlocker.width * scaleFactor / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2 - this.rotateIcon.width / 2,
-        y: this.selectedSightBlocker.y * scaleFactor + offset.y + this.selectedSightBlocker.height * scaleFactor / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2 - this.rotateIcon.height / 2,
-        width: this.rotateIcon.width,
-        height: this.rotateIcon.height,
-      })) {
-        this.rotating = true
-        this.mouseHandler.disable()
+      } else {
+        const radius = (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2
+        const rotateIconRect = {
+          x: centerScreen.x - this.rotateIcon.width / 2 + cos * radius,
+          y: centerScreen.y - this.rotateIcon.height / 2 + sin * radius,
+          width: this.rotateIcon.width,
+          height: this.rotateIcon.height,
+        }
+
+        if (CoordinateUtils.pointInRect({ x: event.offsetX, y: event.offsetY }, rotateIconRect)) {
+          this.rotating = true
+          this.mouseHandler.disable()
+        }
       }
     }
   }
@@ -168,7 +188,4 @@ class RoomEditor {
     this.mouseHandler.enable()
   }
 
-  pointInBox(x, y, box) {
-    return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height
-  }
 }

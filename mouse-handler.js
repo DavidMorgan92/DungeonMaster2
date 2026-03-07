@@ -83,7 +83,8 @@ class MouseHandler {
 
     const offset = this.getOffset()
 
-    this.updateOffset(px - ((px - offset.x) / prevScale) * newScale, py - ((py - offset.y) / prevScale) * newScale)
+    const newOffset = CoordinateUtils.adjustOffsetForZoom({ x: px, y: py }, offset, prevScale, newScale)
+    this.updateOffset(newOffset.x, newOffset.y)
     this.updateScaleFactor(newScale)
   }
 }

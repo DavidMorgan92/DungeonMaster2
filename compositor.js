@@ -28,11 +28,17 @@ class Compositor {
     for (const provider of this.sightProviders) {
       provider.render(this.sightBlockers)
 
+      const topLeft = CoordinateUtils.worldToScreen({
+        x: provider.x - provider.radius,
+        y: provider.y - provider.radius,
+      }, scaleFactor, { x: offsetX, y: offsetY })
+      const size = provider.radius * 2 * scaleFactor
+
       shadowCtx.drawImage(provider.canvas,
-        (provider.x - provider.radius) * scaleFactor + offsetX,
-        (provider.y - provider.radius) * scaleFactor + offsetY,
-        provider.radius * 2 * scaleFactor,
-        provider.radius * 2 * scaleFactor)
+        topLeft.x,
+        topLeft.y,
+        size,
+        size)
     }
   }
 }
