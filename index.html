@@ -16,6 +16,10 @@
   <div id="drawer">
     <h1>Dungeon Master</h1>
 
+    <h2>Room</h2>
+    <button id="load-room">Load Room</button>
+    <button id="save-room">Save Room</button>
+
     <h2>Heroes</h2>
     <select id="heroes" size="5">
       <option value="hero1">Hero 1</option>
@@ -50,6 +54,7 @@
   <script src="sight-blocker.js"></script>
   <script src="sight-provider.js"></script>
   <script src="room-editor.js"></script>
+  <script src="room-serializer.js"></script>
 
   <script>
     const sightProviders = []
@@ -81,6 +86,12 @@
 
     document.getElementById('delete-selected-sight-blocker').addEventListener('click', () => {
       roomEditor.deleteSelectedSightBlocker()
+    })
+
+    const roomSerializer = new RoomSerializer()
+
+    document.getElementById('save-room').addEventListener('click', async () => {
+      await roomSerializer.save()
     })
   </script>
 </body>
