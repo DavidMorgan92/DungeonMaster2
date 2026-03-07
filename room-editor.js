@@ -29,6 +29,7 @@ class RoomEditor {
       this.selectedSightBlocker = null
       this.dragging = false
       this.rotating = false
+      this.addingSightBlocker = false
     }
   }
 
