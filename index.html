@@ -57,42 +57,52 @@
   <script src="room-serializer.js"></script>
 
   <script>
-    const sightProviders = []
-    const sightBlockers = [
-      new SightBlocker(200, 200, 100, 100, 20),
-      new SightBlocker(400, 300, 150, 150, 45),
-    ]
-
-    const mainCanvas = document.getElementById('main-canvas')
-    const background = document.getElementById('background')
-
-    const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
-
-    const moveIcon = document.getElementById('move-icon')
-    const rotateIcon = document.getElementById('rotate-icon')
-
-    const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
-
-    const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
-    editSightBlockersCheckbox.addEventListener('change', (event) => {
-      roomEditor.toggleEditSightBlockers(event.target.checked)
-    })
-
-    editSightBlockersCheckbox.dispatchEvent(new Event('change'))
-
-    document.getElementById('add-sight-blocker').addEventListener('click', () => {
-      roomEditor.startAddingSightBlocker()
-    })
-
-    document.getElementById('delete-selected-sight-blocker').addEventListener('click', () => {
-      roomEditor.deleteSelectedSightBlocker()
-    })
-
-    const roomSerializer = new RoomSerializer()
-
-    document.getElementById('save-room').addEventListener('click', async () => {
-      await roomSerializer.save()
-    })
+    (function() {
+      const sightProviders = []
+      const sightBlockers = [
+        new SightBlocker(200, 200, 100, 100, 20),
+        new SightBlocker(400, 300, 150, 150, 45),
+      ]
+  
+      const mainCanvas = document.getElementById('main-canvas')
+      const background = document.getElementById('background')
+  
+      const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
+  
+      const moveIcon = document.getElementById('move-icon')
+      const rotateIcon = document.getElementById('rotate-icon')
+  
+      const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
+  
+      const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
+      editSightBlockersCheckbox.addEventListener('change', (event) => {
+        roomEditor.toggleEditSightBlockers(event.target.checked)
+      })
+  
+      editSightBlockersCheckbox.dispatchEvent(new Event('change'))
+  
+      document.getElementById('add-sight-blocker').addEventListener('click', () => {
+        roomEditor.startAddingSightBlocker()
+      })
+  
+      document.getElementById('delete-selected-sight-blocker').addEventListener('click', () => {
+        roomEditor.deleteSelectedSightBlocker()
+      })
+  
+      const roomSerializer = new RoomSerializer(sightBlockers)
+  
+      document.getElementById('save-room').addEventListener('click', async () => {
+        await roomSerializer.save()
+        roomEditor.reset()
+        canvasManager.scheduleRender()
+      })
+  
+      document.getElementById('load-room').addEventListener('click', async () => {
+        await roomSerializer.load()
+        roomEditor.reset()
+        canvasManager.scheduleRender()
+      })
+    })()
   </script>
 </body>
 
