@@ -6,7 +6,7 @@ class RoomEditor {
     this.mouseHandler = mouseHandler
     this.editSightBlockers = false
 
-    this.canvasManager.addRenderOperation(this.renderSightBlockers.bind(this))
+    this.canvasManager.addRenderOperation(this.render.bind(this))
 
     this.canvasManager.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
     this.canvasManager.canvas.addEventListener('mousedown', event => this.handleMouseDown(event))
@@ -32,7 +32,7 @@ class RoomEditor {
     }
   }
 
-  renderSightBlockers() {
+  render() {
     if (!this.editSightBlockers)
       return
 
@@ -43,7 +43,7 @@ class RoomEditor {
     this.canvasManager.ctx.globalCompositeOperation = 'source-over'
     this.canvasManager.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)'
 
-    this.renderSightBlockersFill(scaleFactor, offset)
+    this.renderSightBlockers(scaleFactor, offset)
     
     if (this.hoveredSightBlocker && this.hoveredSightBlocker !== this.selectedSightBlocker)
       this.renderHoveredSightBlocker(scaleFactor, offset)
@@ -54,7 +54,7 @@ class RoomEditor {
     this.canvasManager.ctx.restore()
   }
 
-  renderSightBlockersFill(scaleFactor, offset) {
+  renderSightBlockers(scaleFactor, offset) {
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
       const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
 
