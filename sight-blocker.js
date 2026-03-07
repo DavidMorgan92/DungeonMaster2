@@ -11,7 +11,6 @@ class SightBlocker {
     ctx.save()
     ctx.fillStyle = 'darkgray'
 
-    // draw a shape that is the projection of the corners from the center
     const corners = this.getCorners(centerX, centerY)
     ctx.beginPath()
     ctx.moveTo(corners[0].x, corners[0].y)
