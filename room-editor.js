@@ -50,7 +50,7 @@ class RoomEditor {
       this.renderHoveredSightBlocker(scaleFactor, offset)
 
     if (this.selectedSightBlocker)
-      this.renderSelectedsightBlocker(scaleFactor, offset)
+      this.renderSelectedSightBlocker(scaleFactor, offset)
 
     this.canvasManager.ctx.restore()
   }
@@ -75,7 +75,7 @@ class RoomEditor {
     this.renderSightBlockerOutline('red', offset, scaleFactor, this.hoveredSightBlocker)
   }
 
-  renderSelectedsightBlocker(scaleFactor, offset) {
+  renderSelectedSightBlocker(scaleFactor, offset) {
     this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
 
     const centerScreen = CoordinateUtils.worldToScreen({
