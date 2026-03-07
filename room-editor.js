@@ -98,21 +98,23 @@ class RoomEditor {
     const scaleFactor = this.canvasManager.getScaleFactor()
     const offset = this.canvasManager.getOffset()
 
-    const prevHovered = this.hoveredSightBlocker
-    this.hoveredSightBlocker = null
+    if (!this.dragging && !this.rotating) {
+      const prevHovered = this.hoveredSightBlocker
+      this.hoveredSightBlocker = null
 
-    for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
-      const screenCorners = corners.map(corner => CoordinateUtils.worldToScreen(corner, scaleFactor, offset))
+      for (const blocker of this.canvasManager.compositor.sightBlockers) {
+        const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
+        const screenCorners = corners.map(corner => CoordinateUtils.worldToScreen(corner, scaleFactor, offset))
 
-      if (CoordinateUtils.pointInPolygon({ x: event.offsetX, y: event.offsetY }, screenCorners)) {
-        this.hoveredSightBlocker = blocker
-        break
+        if (CoordinateUtils.pointInPolygon({ x: event.offsetX, y: event.offsetY }, screenCorners)) {
+          this.hoveredSightBlocker = blocker
+          break
+        }
       }
-    }
 
-    if (prevHovered !== this.hoveredSightBlocker)
-      this.canvasManager.scheduleRender()
+      if (prevHovered !== this.hoveredSightBlocker)
+        this.canvasManager.scheduleRender()
+    }
 
     this.canvasManager.canvas.style.cursor = this.hoveredSightBlocker ? 'pointer' : 'grab'
 
