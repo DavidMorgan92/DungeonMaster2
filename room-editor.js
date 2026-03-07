@@ -263,8 +263,8 @@ class RoomEditor {
 
     if (this.addingSightBlocker && this.addingSightBlockerRect && this.addingSightBlockerRect.width > 0 && this.addingSightBlockerRect.height > 0) {
       this.canvasManager.compositor.sightBlockers.push(new SightBlocker(
-        this.addingSightBlockerRect.x,
-        this.addingSightBlockerRect.y,
+        this.addingSightBlockerRect.x + this.addingSightBlockerRect.width / 2,
+        this.addingSightBlockerRect.y + this.addingSightBlockerRect.height / 2,
         this.addingSightBlockerRect.width,
         this.addingSightBlockerRect.height,
         0
