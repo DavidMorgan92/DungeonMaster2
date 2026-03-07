@@ -12,10 +12,14 @@ class SightProvider {
     this.ctx.fillStyle = 'white'
   }
 
-  render() {
+  render(sightBlockers) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.beginPath()
     this.ctx.arc(this.radius, this.radius, this.radius, 0, Math.PI * 2)
     this.ctx.fill()
+
+    for (const sightBlocker of sightBlockers) {
+      sightBlocker.render(this.ctx, this.x - this.radius, this.y - this.radius)
+    }
   }
 }

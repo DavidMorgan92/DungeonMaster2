@@ -11,15 +11,6 @@ class Compositor {
 
     this.backgroundRenderer.render(ctx, offsetX, offsetY, scaleFactor)
 
-    for (const blocker of this.sightBlockers) {
-      ctx.save()
-      ctx.translate(blocker.x * scaleFactor + offsetX, blocker.y * scaleFactor + offsetY)
-      ctx.rotate(blocker.angle * Math.PI / 180)
-      ctx.fillStyle = 'black'
-      ctx.fillRect(-blocker.width * scaleFactor / 2, -blocker.height * scaleFactor / 2, blocker.width * scaleFactor, blocker.height * scaleFactor)
-      ctx.restore()
-    }
-
     this.renderShadows(offsetX, offsetY, scaleFactor, shadowCtx)
 
     ctx.save()
@@ -33,7 +24,7 @@ class Compositor {
     shadowCtx.fillRect(0, 0, shadowCtx.canvas.width, shadowCtx.canvas.height)
 
     for (const provider of this.sightProviders) {
-      provider.render()
+      provider.render(this.sightBlockers)
 
       shadowCtx.drawImage(provider.canvas,
         (provider.x - provider.radius) * scaleFactor + offsetX,
