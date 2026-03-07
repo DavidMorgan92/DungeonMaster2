@@ -102,8 +102,10 @@ class RoomEditor {
     this.hoveredSightBlocker = null
 
     for (const blocker of this.canvasManager.compositor.sightBlockers) {
-      const screenRect = CoordinateUtils.worldRectToScreen(blocker, scaleFactor, offset)
-      if (CoordinateUtils.pointInRect({ x: event.offsetX, y: event.offsetY }, screenRect)) {
+      const corners = blocker.getCorners(-blocker.width / 2, -blocker.height / 2)
+      const screenCorners = corners.map(corner => CoordinateUtils.worldToScreen(corner, scaleFactor, offset))
+
+      if (CoordinateUtils.pointInPolygon({ x: event.offsetX, y: event.offsetY }, screenCorners)) {
         this.hoveredSightBlocker = blocker
         break
       }
