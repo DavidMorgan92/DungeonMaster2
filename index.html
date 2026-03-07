@@ -10,9 +10,21 @@
 
 <body>
   <img id="background" src="test.jpg" hidden>
-    
+
   <div id="drawer">
     <h1>Dungeon Master</h1>
+
+    <select id="heroes" size="5">
+      <option value="hero1">Hero 1</option>
+      <option value="hero2">Hero 2</option>
+      <option value="hero3">Hero 3</option>
+      <option value="hero4">Hero 4</option>
+      <option value="hero5">Hero 5</option>
+    </select>
+    <div id="hero-controls">
+      <button id="add-hero">Add Hero</button>
+      <button id="remove-hero">Remove Hero</button>
+    </div>
   </div>
 
   <div id="main-canvas-container">
@@ -27,15 +39,15 @@
   <script src="sight-provider.js"></script>
 
   <script>
-    const mainCanvas = document.getElementById('main-canvas')
-    const background = document.getElementById('background')
-
     const sightProviders = []
     const sightBlockers = []
 
     initCanvas()
 
     function initCanvas() {
+      const mainCanvas = document.getElementById('main-canvas')
+      const background = document.getElementById('background')
+
       const backgroundRenderer = new BackgroundRenderer(background)
       const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
       const mainCanvasManager = new CanvasManager(mainCanvas, compositor)
