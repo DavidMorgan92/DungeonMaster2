@@ -12,21 +12,22 @@ class MouseHandler {
     this.mouseDeltaX = 0
     this.mouseDeltaY = 0
 
-    this.canvas.addEventListener('mousedown', () => this.handleMouseDown())
-    this.canvas.addEventListener('mouseup', () => this.handleMouseUp())
-    this.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
-    this.canvas.addEventListener('wheel', event => this.handleWheel(event), { passive: false })
+    this.canvas.addEventListener('mousedown', () => this.startDragging())
+    this.canvas.addEventListener('mouseup', () => this.stopDragging())
+    this.canvas.addEventListener('mouseleave', () => this.stopDragging())
+    this.canvas.addEventListener('mousemove', event => this.scroll(event))
+    this.canvas.addEventListener('wheel', event => this.zoom(event), { passive: false })
   }
 
-  handleMouseDown() {
+  startDragging() {
     this.dragging = true
   }
 
-  handleMouseUp() {
+  stopDragging() {
     this.dragging = false
   }
 
-  handleMouseMove(event) {
+  scroll(event) {
     if (this.lastMouseX === undefined) {
       this.lastMouseX = event.offsetX
       this.lastMouseY = event.offsetY
@@ -44,7 +45,7 @@ class MouseHandler {
     }
   }
 
-  handleWheel(event) {
+  zoom(event) {
     event.preventDefault()
     const prevScale = this.getScaleFactor()
     const zoomIntensity = 0.0015
