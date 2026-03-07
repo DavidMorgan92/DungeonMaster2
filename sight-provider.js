@@ -19,7 +19,7 @@ class SightProvider {
     this.ctx.fill()
 
     for (const sightBlocker of sightBlockers) {
-      sightBlocker.render(this.ctx, this.x - this.radius, this.y - this.radius)
+      sightBlocker.render(this.ctx, this.x - this.radius, this.y - this.radius, this.radius)
     }
   }
 }

@@ -7,26 +7,34 @@ class SightBlocker {
     this.angle = angle
   }
 
-  render(ctx, centerX, centerY) {
+  render(ctx, centerX, centerY, radius) {
     ctx.save()
     ctx.fillStyle = 'darkgray'
 
     const corners = this.getCorners(centerX, centerY)
     
-    this.drawProjection(ctx, centerX, centerY, corners[0], corners[1])
-    this.drawProjection(ctx, centerX, centerY, corners[1], corners[2])
-    this.drawProjection(ctx, centerX, centerY, corners[2], corners[3])
-    this.drawProjection(ctx, centerX, centerY, corners[3], corners[0])
+    ctx.beginPath()
+    ctx.moveTo(corners[0].x, corners[0].y)
+    ctx.lineTo(corners[1].x, corners[1].y)
+    ctx.lineTo(corners[2].x, corners[2].y)
+    ctx.lineTo(corners[3].x, corners[3].y)
+    ctx.closePath()
+    ctx.fill()
+
+    this.drawProjection(ctx, radius, corners[0], corners[1])
+    this.drawProjection(ctx, radius, corners[1], corners[2])
+    this.drawProjection(ctx, radius, corners[2], corners[3])
+    this.drawProjection(ctx, radius, corners[3], corners[0])
 
     ctx.restore()
   }
 
-  drawProjection(ctx, centerX, centerY, corner1, corner2) {
+  drawProjection(ctx, radius, corner1, corner2) {
     ctx.beginPath()
     ctx.moveTo(corner1.x, corner1.y)
     ctx.lineTo(corner2.x, corner2.y)
-    ctx.lineTo(corner2.x * 1000, corner2.y * 1000)
-    ctx.lineTo(corner1.x * 1000, corner1.y * 1000)
+    ctx.lineTo(radius + (corner2.x - radius) * 1000, radius + (corner2.y - radius) * 1000)
+    ctx.lineTo(radius + (corner1.x - radius) * 1000, radius + (corner1.y - radius) * 1000)
     ctx.closePath()
     ctx.fill()
   }
