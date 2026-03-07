@@ -51,14 +51,17 @@ class RoomEditor {
 
     if (this.selectedSightBlocker) {
       this.renderSightBlockerOutline('white', offset, scaleFactor, this.selectedSightBlocker)
-      
+
       this.canvasManager.ctx.drawImage(this.moveIcon,
         (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.moveIcon.width / 2,
         (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.moveIcon.height / 2)
 
+      const cos = Math.cos(this.selectedSightBlocker.angle * Math.PI / 180)
+      const sin = Math.sin(this.selectedSightBlocker.angle * Math.PI / 180)
+
       this.canvasManager.ctx.drawImage(this.rotateIcon,
-        (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.rotateIcon.width / 2,
-        (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.rotateIcon.height / 2)
+        (this.selectedSightBlocker.x + this.selectedSightBlocker.width / 2) * scaleFactor + offset.x - this.rotateIcon.width / 2 + cos * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2,
+        (this.selectedSightBlocker.y + this.selectedSightBlocker.height / 2) * scaleFactor + offset.y - this.rotateIcon.height / 2 + sin * (this.selectedSightBlocker.width + this.rotateIcon.width + 16) * scaleFactor / 2)
     }
 
     this.canvasManager.ctx.restore()
