@@ -34,51 +34,24 @@
   <script src="sight-provider.js"></script>
 
   <script>
-    const center1 = { x: 400, y: 300 }
-    const center2 = { x: 650, y: 500 }
-
-    const sightProviders = [
-      new SightProvider(center1.x, center1.y, 150),
-      new SightProvider(center2.x, center2.y, 100),
-    ]
-
-    const sightBlockers = [
-      new SightBlocker(450, 350, 100, 50, 20),
-      new SightBlocker(600, 420, 50, 100, 0),
-    ]
-
     const mainCanvas = document.getElementById('main-canvas')
     const background = document.getElementById('background')
 
-    const backgroundRenderer = new BackgroundRenderer(background)
-    const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
-    const mainCanvasManager = new CanvasManager(mainCanvas, compositor)
-    const mouseHandler = new MouseHandler(mainCanvas,
-      (offsetX, offsetY) => mainCanvasManager.updateOffset(offsetX, offsetY),
-      newScaleFactor => mainCanvasManager.updateScaleFactor(newScaleFactor),
-      () => mainCanvasManager.getOffset(),
-      () => mainCanvasManager.getScaleFactor())
+    const sightProviders = []
+    const sightBlockers = []
 
-    let theta = 0
+    initCanvas()
 
-    function animate() {
-      const cos = Math.cos(theta)
-      const sin = Math.sin(theta)
-
-      theta += 0.02
-      sightProviders[0].x = center1.x + cos * 100
-      sightProviders[0].y = center1.y + sin * 100
-
-      sightProviders[1].x = center2.x - cos * 50
-      sightProviders[1].y = center2.y - sin * 50
-      
-      sightBlockers[0].angle += 1
-      sightBlockers[1].angle -= 2
-      mainCanvasManager.scheduleRender()
-      setTimeout(animate, 50)
+    function initCanvas() {
+      const backgroundRenderer = new BackgroundRenderer(background)
+      const compositor = new Compositor(backgroundRenderer, sightProviders, sightBlockers)
+      const mainCanvasManager = new CanvasManager(mainCanvas, compositor)
+      const mouseHandler = new MouseHandler(mainCanvas,
+        (offsetX, offsetY) => mainCanvasManager.updateOffset(offsetX, offsetY),
+        newScaleFactor => mainCanvasManager.updateScaleFactor(newScaleFactor),
+        () => mainCanvasManager.getOffset(),
+        () => mainCanvasManager.getScaleFactor())
     }
-
-    animate()
   </script>
 </body>
 

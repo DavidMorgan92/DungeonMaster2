@@ -10,6 +10,7 @@ class SightBlocker {
   render(ctx, centerX, centerY, radius) {
     ctx.save()
     ctx.fillStyle = 'darkgray'
+    ctx.globalCompositeOperation = 'destination-out'
 
     const corners = this.getCorners(centerX, centerY)
     
