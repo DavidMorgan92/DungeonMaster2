@@ -11,6 +11,7 @@ class RoomEditor {
     this.canvasManager.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
     this.canvasManager.canvas.addEventListener('mousedown', event => this.handleMouseDown(event))
     this.canvasManager.canvas.addEventListener('mouseup', () => this.handleMouseUp())
+    this.canvasManager.canvas.addEventListener('mouseleave', () => this.handleMouseLeave())
 
     this.hoveredSightBlocker = null
     this.selectedSightBlocker = null
@@ -21,6 +22,13 @@ class RoomEditor {
   toggleEditSightBlockers(show) {
     this.editSightBlockers = show
     this.canvasManager.scheduleRender()
+
+    if (!show) {
+      this.hoveredSightBlocker = null
+      this.selectedSightBlocker = null
+      this.dragging = false
+      this.rotating = false
+    }
   }
 
   renderSightBlockers() {
@@ -196,5 +204,10 @@ class RoomEditor {
     this.dragging = false
     this.rotating = false
     this.mouseHandler.enable()
+  }
+
+  handleMouseLeave() {
+    this.dragging = false
+    this.rotating = false
   }
 }
