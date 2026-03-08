@@ -62,6 +62,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
   const heroesSelect = document.getElementById('heroes')
   const heroNameInput = document.getElementById('hero-name')
   const changeHeroIconButton = document.getElementById('change-hero-icon')
+  const sightRangeInput = document.getElementById('sight-range')
 
   document.getElementById('add-hero').addEventListener('click', () => {
     const newHero = new Hero(200, 200, 500)
@@ -84,6 +85,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
       heroNameInput.value = ''
       heroNameInput.disabled = true
       changeHeroIconButton.disabled = true
+      sightRangeInput.disabled = true
       heroManager.deselectHero()
       return
     }
@@ -92,6 +94,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     heroNameInput.value = selectedOption.text
     heroNameInput.disabled = false
     changeHeroIconButton.disabled = false
+    sightRangeInput.disabled = false
     heroManager.selectHeroByIndex(heroesSelect.selectedIndex)
   })
 
