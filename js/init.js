@@ -1,13 +1,6 @@
 (function () {
-  const mainCanvas = document.getElementById('main-canvas')
-  const background = document.getElementById('background')
-  const moveIcon = document.getElementById('move-icon')
-  const rotateIcon = document.getElementById('rotate-icon')
-  const heroImage = document.getElementById('hero')
-
   const heroes = [
-    new Hero(100, 100, 500, heroImage, 'Nidhel'),
-    new Hero(600, 200, 400, heroImage, 'Kethra'),
+    new Hero(100, 100, 500),
   ]
 
   const sightBlockers = [
@@ -15,14 +8,19 @@
     new SightBlocker(400, 300, 150, 150, 45),
   ]
 
+  const mainCanvas = document.getElementById('main-canvas')
+  const background = document.getElementById('background')
   const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, heroes, sightBlockers)
+
+  const moveIcon = document.getElementById('move-icon')
+  const rotateIcon = document.getElementById('rotate-icon')
   const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
+
   const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
-  const heroManager = new HeroManager(heroes, canvasManager)
 
   initDrawerUi()
   initRoomUi(roomSerializer, roomEditor, canvasManager, heroes)
-  initHeroesUi(heroes, canvasManager, heroManager)
+  initHeroesUi(heroes, canvasManager)
   initHeroesSelectUi(heroes)
   initSightBlockersUi(roomEditor)
   initBackgroundLoaderUi(background, canvasManager)
@@ -31,7 +29,7 @@
 function initDrawerUi() {
   let drawerIsOpen = true
   const openCloseDrawerButton = document.getElementById('open-close-drawer')
-  const drawer = document.getElementById('drawer')
+  const darwer = document.getElementById('drawer')
 
   openCloseDrawerButton.addEventListener('click', () => {
     drawerIsOpen = !drawerIsOpen
@@ -58,10 +56,9 @@ function initRoomUi(roomSerializer, roomEditor, canvasManager, heroes) {
   })
 }
 
-function initHeroesUi(heroes, canvasManager, heroManager) {
+function initHeroesUi(heroes, canvasManager) {
   const heroesSelect = document.getElementById('heroes')
   const heroNameInput = document.getElementById('hero-name')
-  const changeHeroIconButton = document.getElementById('change-hero-icon')
 
   document.getElementById('add-hero').addEventListener('click', () => {
     const newHero = new Hero(200, 200, 500)
@@ -82,15 +79,11 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
   heroesSelect.addEventListener('change', () => {
     if (heroesSelect.selectedIndex < 0) {
       heroNameInput.value = ''
-      heroNameInput.disabled = true
-      changeHeroIconButton.disabled = true
       return
     }
 
     const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
     heroNameInput.value = selectedOption.text
-    heroNameInput.disabled = false
-    changeHeroIconButton.disabled = false
   })
 
   heroNameInput.addEventListener('input', () => {
@@ -100,8 +93,6 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
     selectedOption.text = heroNameInput.value
   })
-
-  changeHeroIconButton.addEventListener('click', () => {})
 }
 
 function initHeroesSelectUi(heroes) {
@@ -109,7 +100,7 @@ function initHeroesSelectUi(heroes) {
   heroesSelect.options.length = 0
 
   for (const hero of heroes) {
-    heroesSelect.add(new Option(hero.name))
+    heroesSelect.add(new Option('New Hero'))
   }
 }
 

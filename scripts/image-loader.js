@@ -1,9 +1,5 @@
-class BackgroundImageLoader {
-  constructor (backgroundElement) {
-    this.backgroundElement = backgroundElement
-  }
-
-  async load() {
+class ImageLoader {
+  async load(imageElement) {
     const [fileHandle] = await window.showOpenFilePicker({
       multiple: false,
       types: [{
@@ -15,7 +11,7 @@ class BackgroundImageLoader {
     const file = await fileHandle.getFile()
     const content = await this.fileToBase64(file)
 
-    this.backgroundElement.src = content
+    imageElement.src = content
   }
 
   fileToBase64(file) {
