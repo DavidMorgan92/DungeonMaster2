@@ -19,6 +19,7 @@ class RoomSerializer {
         x: hero.x,
         y: hero.y,
         radius: hero.radius,
+        name: hero.name,
       })),
       background,
     }
@@ -54,7 +55,7 @@ class RoomSerializer {
     this.heroes.splice(0, this.heroes.length)
 
     for (const hero of room.heroes) {
-      this.heroes.push(new Hero(hero.x, hero.y, hero.radius))
+      this.heroes.push(new Hero(hero.x, hero.y, hero.radius, undefined, hero.name))
     }
 
     this.backgroundElement.src = room.background

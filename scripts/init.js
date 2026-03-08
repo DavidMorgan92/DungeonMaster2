@@ -2,8 +2,8 @@
   const heroImage = document.getElementById('hero')
 
   const heroes = [
-    new Hero(100, 100, 500, heroImage),
-    new Hero(600, 200, 400, heroImage),
+    new Hero(100, 100, 500, heroImage, 'Nidhel'),
+    new Hero(600, 200, 400, heroImage, 'Kethra'),
   ]
 
   const sightBlockers = [
@@ -106,7 +106,7 @@ function initHeroesSelectUi(heroes) {
   heroesSelect.options.length = 0
 
   for (const hero of heroes) {
-    heroesSelect.add(new Option('New Hero'))
+    heroesSelect.add(new Option(hero.name))
   }
 }
 
