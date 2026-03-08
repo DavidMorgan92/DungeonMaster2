@@ -18,7 +18,7 @@
   const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, heroes, sightBlockers)
   const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
   const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
-  const heroManager = new HeroManager(heroes, canvasManager)
+  const heroManager = new HeroManager(heroes, canvasManager, mouseHandler)
 
   initDrawerUi()
   initRoomUi(roomSerializer, roomEditor, canvasManager, heroes)
@@ -84,6 +84,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
       heroNameInput.value = ''
       heroNameInput.disabled = true
       changeHeroIconButton.disabled = true
+      heroManager.deselectHero()
       return
     }
 
@@ -91,6 +92,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     heroNameInput.value = selectedOption.text
     heroNameInput.disabled = false
     changeHeroIconButton.disabled = false
+    heroManager.selectHeroByIndex(heroesSelect.selectedIndex)
   })
 
   heroNameInput.addEventListener('input', () => {
@@ -109,6 +111,11 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     await heroManager.changeHeroIcon(heroesSelect.selectedIndex)
     canvasManager.scheduleRender()
   })
+
+  heroManager.onHeroSelected = function (index) {
+    heroesSelect.selectedIndex = index
+    heroesSelect.dispatchEvent(new Event('change'))
+  }
 }
 
 function initHeroesSelectUi(heroes) {

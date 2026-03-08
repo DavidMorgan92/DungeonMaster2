@@ -9,9 +9,12 @@ class HeroManager {
     this.imageLoader = new ImageLoader()
 
     this.canvasManager.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
+    this.canvasManager.canvas.addEventListener('mousedown', event => this.handleMouseDown(event))
+    this.canvasManager.canvas.addEventListener('mouseup', () => this.handleMouseUp())
     this.canvasManager.canvas.addEventListener('mouseleave', () => this.handleMouseLeave())
 
     this.hoveredHero = null
+    this.selectedHero = null
     this.dragging = false
   }
 
@@ -35,15 +38,18 @@ class HeroManager {
     this.canvasManager.ctx.restore()
 
     if (this.hoveredHero)
-      this.renderHoveredHero(scaleFactor, offset)
+      this.renderHeroOutline(this.hoveredHero, scaleFactor, offset, 'red')
+    
+    if (this.selectedHero)
+      this.renderHeroOutline(this.selectedHero, scaleFactor, offset, 'white')
   }
 
-  renderHoveredHero(scaleFactor, offset) {
-    const radius = (Math.max(this.hoveredHero.icon.width, this.hoveredHero.icon.height) + 15) * scaleFactor / 2
-    const screenPoint = CoordinateUtils.worldToScreen(this.hoveredHero, scaleFactor, offset)
+  renderHeroOutline(hero, scaleFactor, offset, colour) {
+    const radius = (Math.max(hero.icon.width, hero.icon.height) + 15) * scaleFactor / 2
+    const screenPoint = CoordinateUtils.worldToScreen(hero, scaleFactor, offset)
 
     this.canvasManager.ctx.save()
-    this.canvasManager.ctx.strokeStyle = 'white'
+    this.canvasManager.ctx.strokeStyle = colour
     this.canvasManager.ctx.lineWidth = 3
     this.canvasManager.ctx.beginPath()
     this.canvasManager.ctx.arc(screenPoint.x, screenPoint.y, radius, 0, Math.PI * 2)
@@ -56,13 +62,13 @@ class HeroManager {
   }
 
   handleMouseMove(event) {
+    const screenPoint = { x: event.offsetX, y: event.offsetY }
+    const scaleFactor = this.canvasManager.getScaleFactor()
+    const offset = this.canvasManager.getOffset()
+
     if (!this.dragging) {
       const prevHovered = this.hoveredHero
       this.hoveredHero = null
-
-      const scaleFactor = this.canvasManager.getScaleFactor()
-      const offset = this.canvasManager.getOffset()
-      const screenPoint = { x: event.offsetX, y: event.offsetY }
 
       for (const hero of this.heroes) {
         if (this.pointOverHero(screenPoint, hero, scaleFactor, offset)) {
@@ -74,6 +80,36 @@ class HeroManager {
       if (prevHovered !== this.hoveredHero)
         this.canvasManager.scheduleRender()
     }
+
+    if (this.selectedHero && this.dragging) {
+      const worldPoint = CoordinateUtils.screenToWorld(screenPoint, scaleFactor, offset)
+      this.selectedHero.x = worldPoint.x
+      this.selectedHero.y = worldPoint.y
+      this.canvasManager.scheduleRender()
+    }
+  }
+
+  handleMouseDown(event) {
+    const scaleFactor = this.canvasManager.getScaleFactor()
+    const offset = this.canvasManager.getOffset()
+
+    if (this.hoveredHero)
+      this.selectHero(this.hoveredHero)
+
+    const screenPoint = { x: event.offsetX, y: event.offsetY }
+
+    if (this.selectedHero) {
+      if (this.pointOverHero(screenPoint, this.selectedHero, scaleFactor, offset)) {
+        this.dragging = true
+        this.mouseHandler.disable()
+      }
+    }
+  }
+
+  handleMouseUp() {
+    this.dragging = false
+    this.mouseHandler.enable()
+    this.canvasManager.canvas.style.cursor = 'grab'
   }
 
   handleMouseLeave() {
@@ -91,5 +127,23 @@ class HeroManager {
     const screenRect = CoordinateUtils.worldRectToScreen(heroRect, scaleFactor, offset)
 
     return CoordinateUtils.pointInRect(point, screenRect)
+  }
+
+  selectHero(hero) {
+    this.selectedHero = hero
+    this.canvasManager.scheduleRender()
+
+    const index = this.heroes.indexOf(hero)
+    this.onHeroSelected(index)
+  }
+
+  selectHeroByIndex(index) {
+    this.selectedHero = this.heroes[index]
+    this.canvasManager.scheduleRender()
+  }
+
+  deselectHero() {
+    this.selectHero = null
+    this.canvasManager.scheduleRender()
   }
 }
