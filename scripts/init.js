@@ -101,7 +101,13 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     selectedOption.text = heroNameInput.value
   })
 
-  changeHeroIconButton.addEventListener('click', () => {})
+  changeHeroIconButton.addEventListener('click', async () => {
+    if (heroesSelect.selectedIndex < 0)
+      return
+
+    await heroManager.changeHeroIcon(heroesSelect.selectedIndex)
+    canvasManager.scheduleRender()
+  })
 }
 
 function initHeroesSelectUi(heroes) {

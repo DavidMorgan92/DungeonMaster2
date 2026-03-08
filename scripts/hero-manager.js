@@ -4,6 +4,8 @@ class HeroManager {
     this.canvasManager = canvasManager
 
     this.canvasManager.addRenderOperation(this.render.bind(this))
+
+    this.imageLoader = new ImageLoader()
   }
 
   render() {
@@ -24,5 +26,9 @@ class HeroManager {
     }
 
     this.canvasManager.ctx.restore()
+  }
+
+  async changeHeroIcon(index) {
+    await this.imageLoader.load(this.heroes[index].icon)
   }
 }
