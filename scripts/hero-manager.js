@@ -9,6 +9,7 @@ class HeroManager {
     this.imageLoader = new ImageLoader()
 
     this.canvasManager.canvas.addEventListener('mousemove', event => this.handleMouseMove(event))
+    this.canvasManager.canvas.addEventListener('mouseleave', () => this.handleMouseLeave())
 
     this.hoveredHero = null
     this.dragging = false
@@ -73,6 +74,10 @@ class HeroManager {
       if (prevHovered !== this.hoveredHero)
         this.canvasManager.scheduleRender()
     }
+  }
+
+  handleMouseLeave() {
+    this.dragging = false
   }
 
   pointOverHero(point, hero, scaleFactor, offset) {
