@@ -94,18 +94,7 @@
 
       const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
 
-      document.getElementById('save-room').addEventListener('click', async () => {
-        await roomSerializer.save()
-        roomEditor.reset()
-        canvasManager.scheduleRender()
-      })
-
-      document.getElementById('load-room').addEventListener('click', async () => {
-        await roomSerializer.load()
-        roomEditor.reset()
-        initHeroesSelect()
-        canvasManager.scheduleRender()
-      })
+      initRoomSerialization(roomSerializer, roomEditor)
 
       const backgroundImageLoader = new BackgroundImageLoader(background)
 
@@ -182,6 +171,21 @@
       addSightBlockerButton.addEventListener('click', () => roomEditor.startAddingSightBlocker())
       deleteSelectedSightBlockerButton.addEventListener('click', () => roomEditor.deleteSelectedSightBlocker())
       editSightBlockersCheckbox.dispatchEvent(new Event('change'))
+    }
+
+    function initRoomSerialization(roomSerializer, roomEditor) {
+      document.getElementById('save-room').addEventListener('click', async () => {
+        await roomSerializer.save()
+        roomEditor.reset()
+        canvasManager.scheduleRender()
+      })
+
+      document.getElementById('load-room').addEventListener('click', async () => {
+        await roomSerializer.load()
+        roomEditor.reset()
+        initHeroesSelect()
+        canvasManager.scheduleRender()
+      })
     }
   </script>
 </body>
