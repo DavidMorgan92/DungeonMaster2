@@ -1,6 +1,9 @@
 (function () {
+  const heroImage = document.getElementById('hero')
+
   const heroes = [
-    new Hero(100, 100, 500),
+    new Hero(100, 100, 500, heroImage),
+    new Hero(600, 200, 400, heroImage),
   ]
 
   const sightBlockers = [
@@ -18,6 +21,8 @@
 
   const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
   const backgroundImageLoader = new BackgroundImageLoader(background)
+
+  const heroManager = new HeroManager(heroes, canvasManager)
 
   initDrawerUi()
   initRoomUi(roomSerializer, roomEditor, canvasManager, heroes)
