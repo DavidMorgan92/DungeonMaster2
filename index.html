@@ -23,13 +23,7 @@
     <button id="save-room">Save Room</button>
 
     <h2>Heroes</h2>
-    <select id="heroes" size="5">
-      <option value="hero1">Hero 1</option>
-      <option value="hero2">Hero 2</option>
-      <option value="hero3">Hero 3</option>
-      <option value="hero4">Hero 4</option>
-      <option value="hero5">Hero 5</option>
-    </select>
+    <select id="heroes" size="5"></select>
     <div id="hero-controls">
       <button id="add-hero">Add Hero</button>
       <button id="remove-hero">Remove Hero</button>
@@ -61,12 +55,11 @@
   <script src="room-editor.js"></script>
   <script src="room-serializer.js"></script>
   <script src="background-image-loader.js"></script>
+  <script src="hero.js"></script>
 
   <script>
     (function() {
-      const sightProviders = [
-        new SightProvider(300, 500, 500)
-      ]
+      const sightProviders = []
 
       const sightBlockers = [
         new SightBlocker(200, 200, 100, 100, 20),
@@ -126,6 +119,24 @@
         document.getElementById('drawer').classList = drawerIsOpen ? '' : 'closed'
         openCloseDrawerButton.classList = drawerIsOpen ? '' : 'closed'
         openCloseDrawerButton.textContent = drawerIsOpen ? '🞀' : '🞂'
+      })
+
+      const heroesSelect = document.getElementById('heroes')
+
+      document.getElementById('add-hero').addEventListener('click', () => {
+        const newHero = new Hero(200, 200, 500)
+        sightProviders.push(newHero)
+        heroesSelect.add(new Option('New Hero'))
+        canvasManager.scheduleRender()
+      })
+
+      document.getElementById('remove-hero').addEventListener('click', () => {
+        if (heroesSelect.selectedIndex > -1) {
+          sightProviders.splice(heroesSelect.selectedIndex, 1)
+          heroesSelect.remove(heroesSelect.selectedIndex)
+        }
+        
+        canvasManager.scheduleRender()
       })
     })()
   </script>
