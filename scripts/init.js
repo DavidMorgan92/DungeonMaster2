@@ -30,7 +30,7 @@
 function initDrawerUi() {
   let drawerIsOpen = true
   const openCloseDrawerButton = document.getElementById('open-close-drawer')
-  const darwer = document.getElementById('drawer')
+  const drawer = document.getElementById('drawer')
 
   openCloseDrawerButton.addEventListener('click', () => {
     drawerIsOpen = !drawerIsOpen
