@@ -72,38 +72,56 @@
 
       const mainCanvas = document.getElementById('main-canvas')
       const background = document.getElementById('background')
-
       const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, heroes, sightBlockers)
 
       const moveIcon = document.getElementById('move-icon')
       const rotateIcon = document.getElementById('rotate-icon')
-
       const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
 
-      initSightBlockers(roomEditor)
-
-      const heroesSelect = document.getElementById('heroes')
-
-      function initHeroesSelect() {
-        heroesSelect.options.length = 0
-
-        for (const hero of heroes) {
-          heroesSelect.add(new Option('New Hero'))
-        }
-      }
-
       const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
-
-      initRoomSerialization(roomSerializer, roomEditor)
-
       const backgroundImageLoader = new BackgroundImageLoader(background)
 
-      document.getElementById('change-background').addEventListener('click', async () => {
-        await backgroundImageLoader.load()
+      initDrawerUi()
+      initRoomUi(roomSerializer, roomEditor, canvasManager, heroes)
+      initHeroesUi(heroes, canvasManager)
+      initHeroesSelectUi(heroes)
+      initSightBlockersUi(roomEditor)
+      initBackgroundLoaderUi(backgroundImageLoader, canvasManager)
+    })()
+
+    function initDrawerUi() {
+      let drawerIsOpen = true
+      const openCloseDrawerButton = document.getElementById('open-close-drawer')
+      const darwer = document.getElementById('drawer')
+
+      openCloseDrawerButton.addEventListener('click', () => {
+        drawerIsOpen = !drawerIsOpen
+
+        const classList = drawerIsOpen ? '' : 'closed'
+        drawer.classList = classList
+        openCloseDrawerButton.classList = classList
+        openCloseDrawerButton.textContent = drawerIsOpen ? '🞀' : '🞂'
+      })
+    }
+
+    function initRoomUi(roomSerializer, roomEditor, canvasManager, heroes) {
+      document.getElementById('save-room').addEventListener('click', async () => {
+        await roomSerializer.save()
+        roomEditor.reset()
         canvasManager.scheduleRender()
       })
 
-      initDrawer()
+      document.getElementById('load-room').addEventListener('click', async () => {
+        await roomSerializer.load()
+        roomEditor.reset()
+        canvasManager.scheduleRender()
+        initHeroesSelectUi(heroes)
+      })
+    }
+
+    function initHeroesUi(heroes, canvasManager) {
+      const heroesSelect = document.getElementById('heroes')
+      const heroNameInput = document.getElementById('hero-name')
 
       document.getElementById('add-hero').addEventListener('click', () => {
         const newHero = new Hero(200, 200, 500)
@@ -120,8 +138,6 @@
 
         canvasManager.scheduleRender()
       })
-
-      const heroNameInput = document.getElementById('hero-name')
 
       heroesSelect.addEventListener('change', () => {
         if (heroesSelect.selectedIndex < 0) {
@@ -140,24 +156,18 @@
         const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
         selectedOption.text = heroNameInput.value
       })
-    })()
-
-    function initDrawer() {
-      let drawerIsOpen = true
-      const openCloseDrawerButton = document.getElementById('open-close-drawer')
-      const darwer = document.getElementById('drawer')
-
-      openCloseDrawerButton.addEventListener('click', () => {
-        drawerIsOpen = !drawerIsOpen
-
-        const classList = drawerIsOpen ? '' : 'closed'
-        drawer.classList = classList
-        openCloseDrawerButton.classList = classList
-        openCloseDrawerButton.textContent = drawerIsOpen ? '🞀' : '🞂'
-      })
     }
 
-    function initSightBlockers(roomEditor) {
+    function initHeroesSelectUi(heroes) {
+      const heroesSelect = document.getElementById('heroes')
+      heroesSelect.options.length = 0
+
+      for (const hero of heroes) {
+        heroesSelect.add(new Option('New Hero'))
+      }
+    }
+
+    function initSightBlockersUi(roomEditor) {
       const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
       const addSightBlockerButton = document.getElementById('add-sight-blocker')
       const deleteSelectedSightBlockerButton = document.getElementById('delete-selected-sight-blocker')
@@ -173,17 +183,9 @@
       editSightBlockersCheckbox.dispatchEvent(new Event('change'))
     }
 
-    function initRoomSerialization(roomSerializer, roomEditor) {
-      document.getElementById('save-room').addEventListener('click', async () => {
-        await roomSerializer.save()
-        roomEditor.reset()
-        canvasManager.scheduleRender()
-      })
-
-      document.getElementById('load-room').addEventListener('click', async () => {
-        await roomSerializer.load()
-        roomEditor.reset()
-        initHeroesSelect()
+    function initBackgroundLoaderUi(backgroundImageLoader, canvasManager) {
+      document.getElementById('change-background').addEventListener('click', async () => {
+        await backgroundImageLoader.load()
         canvasManager.scheduleRender()
       })
     }
