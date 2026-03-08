@@ -40,6 +40,9 @@
     </div>
     <button id="add-sight-blocker">Add Sight Blocker</button>
     <button id="delete-selected-sight-blocker">Delete Selected Sight Blocker</button>
+
+    <h2>Background</h2>
+    <button id="change-background">Change Background</button>
   </div>
 
   <div id="main-canvas-container">
@@ -55,6 +58,7 @@
   <script src="sight-provider.js"></script>
   <script src="room-editor.js"></script>
   <script src="room-serializer.js"></script>
+  <script src="background-image-loader.js"></script>
 
   <script>
     (function() {
@@ -102,6 +106,13 @@
       document.getElementById('load-room').addEventListener('click', async () => {
         await roomSerializer.load()
         roomEditor.reset()
+        canvasManager.scheduleRender()
+      })
+
+      const backgroundImageLoader = new BackgroundImageLoader(background)
+
+      document.getElementById('change-background').addEventListener('click', () => {
+        backgroundImageLoader.load()
         canvasManager.scheduleRender()
       })
     })()
