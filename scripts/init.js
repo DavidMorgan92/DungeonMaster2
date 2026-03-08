@@ -99,6 +99,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
 
     const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
     selectedOption.text = heroNameInput.value
+    heroes[heroesSelect.selectedIndex].name = heroNameInput.value
   })
 
   changeHeroIconButton.addEventListener('click', async () => {
