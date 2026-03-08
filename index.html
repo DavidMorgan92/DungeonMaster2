@@ -80,19 +80,7 @@
 
       const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
 
-      const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
-      const addSightBlockerButton = document.getElementById('add-sight-blocker')
-      const deleteSelectedSightBlockerButton = document.getElementById('delete-selected-sight-blocker')
-
-      editSightBlockersCheckbox.addEventListener('change', (event) => {
-        roomEditor.toggleEditSightBlockers(event.target.checked)
-        addSightBlockerButton.disabled = !event.target.checked
-        deleteSelectedSightBlockerButton.disabled = !event.target.checked
-      })
-
-      addSightBlockerButton.addEventListener('click', () => roomEditor.startAddingSightBlocker())
-      deleteSelectedSightBlockerButton.addEventListener('click', () => roomEditor.deleteSelectedSightBlocker())
-      editSightBlockersCheckbox.dispatchEvent(new Event('change'))
+      initSightBlockers(roomEditor)
 
       const heroesSelect = document.getElementById('heroes')
 
@@ -172,12 +160,28 @@
 
       openCloseDrawerButton.addEventListener('click', () => {
         drawerIsOpen = !drawerIsOpen
-        
+
         const classList = drawerIsOpen ? '' : 'closed'
         drawer.classList = classList
         openCloseDrawerButton.classList = classList
         openCloseDrawerButton.textContent = drawerIsOpen ? '🞀' : '🞂'
       })
+    }
+
+    function initSightBlockers(roomEditor) {
+      const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
+      const addSightBlockerButton = document.getElementById('add-sight-blocker')
+      const deleteSelectedSightBlockerButton = document.getElementById('delete-selected-sight-blocker')
+
+      editSightBlockersCheckbox.addEventListener('change', (event) => {
+        roomEditor.toggleEditSightBlockers(event.target.checked)
+        addSightBlockerButton.disabled = !event.target.checked
+        deleteSelectedSightBlockerButton.disabled = !event.target.checked
+      })
+
+      addSightBlockerButton.addEventListener('click', () => roomEditor.startAddingSightBlocker())
+      deleteSelectedSightBlockerButton.addEventListener('click', () => roomEditor.deleteSelectedSightBlocker())
+      editSightBlockersCheckbox.dispatchEvent(new Event('change'))
     }
   </script>
 </body>
