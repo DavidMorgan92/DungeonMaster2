@@ -95,7 +95,7 @@
       deleteSelectedSightBlockerButton.addEventListener('click', () => roomEditor.deleteSelectedSightBlocker())
       editSightBlockersCheckbox.dispatchEvent(new Event('change'))
   
-      const roomSerializer = new RoomSerializer(sightBlockers)
+      const roomSerializer = new RoomSerializer(sightBlockers, background)
   
       document.getElementById('save-room').addEventListener('click', async () => {
         await roomSerializer.save()

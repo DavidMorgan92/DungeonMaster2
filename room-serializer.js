@@ -1,6 +1,7 @@
 class RoomSerializer {
-  constructor(sightBlockers) {
+  constructor(sightBlockers, backgroundElement) {
     this.sightBlockers = sightBlockers
+    this.backgroundElement = backgroundElement
 
     this.fileTypes = [{
       description: 'JSON',
@@ -9,8 +10,11 @@ class RoomSerializer {
   }
 
   async save() {
+    const background = await this.getBackgroundAsBase64()
+
     const room = {
       sightBlockers: this.sightBlockers,
+      background,
     }
 
     const content = JSON.stringify(room, null, 2)
@@ -40,5 +44,22 @@ class RoomSerializer {
     for (const sightBlocker of room.sightBlockers) {
       this.sightBlockers.push(new SightBlocker(sightBlocker.x, sightBlocker.y, sightBlocker.width, sightBlocker.height, sightBlocker.angle))
     }
+
+    this.backgroundElement.src = room.background
+  }
+
+  async getBackgroundAsBase64() {
+    if (this.backgroundElement.src.startsWith('data:'))
+      return this.backgroundElement.src
+
+    const response = await fetch(this.backgroundElement.src)
+    const blob = await response.blob()
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
   }
 }
