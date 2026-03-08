@@ -1,4 +1,8 @@
 (function () {
+  const mainCanvas = document.getElementById('main-canvas')
+  const background = document.getElementById('background')
+  const moveIcon = document.getElementById('move-icon')
+  const rotateIcon = document.getElementById('rotate-icon')
   const heroImage = document.getElementById('hero')
 
   const heroes = [
@@ -11,22 +15,15 @@
     new SightBlocker(400, 300, 150, 150, 45),
   ]
 
-  const mainCanvas = document.getElementById('main-canvas')
-  const background = document.getElementById('background')
   const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, heroes, sightBlockers)
-
-  const moveIcon = document.getElementById('move-icon')
-  const rotateIcon = document.getElementById('rotate-icon')
   const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
-
   const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
   const backgroundImageLoader = new BackgroundImageLoader(background)
-
   const heroManager = new HeroManager(heroes, canvasManager)
 
   initDrawerUi()
   initRoomUi(roomSerializer, roomEditor, canvasManager, heroes)
-  initHeroesUi(heroes, canvasManager)
+  initHeroesUi(heroes, canvasManager, heroManager)
   initHeroesSelectUi(heroes)
   initSightBlockersUi(roomEditor)
   initBackgroundLoaderUi(backgroundImageLoader, canvasManager)
@@ -62,9 +59,10 @@ function initRoomUi(roomSerializer, roomEditor, canvasManager, heroes) {
   })
 }
 
-function initHeroesUi(heroes, canvasManager) {
+function initHeroesUi(heroes, canvasManager, heroManager) {
   const heroesSelect = document.getElementById('heroes')
   const heroNameInput = document.getElementById('hero-name')
+  const changeHeroIconButton = document.getElementById('change-hero-icon')
 
   document.getElementById('add-hero').addEventListener('click', () => {
     const newHero = new Hero(200, 200, 500)
@@ -85,11 +83,15 @@ function initHeroesUi(heroes, canvasManager) {
   heroesSelect.addEventListener('change', () => {
     if (heroesSelect.selectedIndex < 0) {
       heroNameInput.value = ''
+      heroNameInput.disabled = true
+      changeHeroIconButton.disabled = true
       return
     }
 
     const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
     heroNameInput.value = selectedOption.text
+    heroNameInput.disabled = false
+    changeHeroIconButton.disabled = false
   })
 
   heroNameInput.addEventListener('input', () => {
@@ -99,6 +101,8 @@ function initHeroesUi(heroes, canvasManager) {
     const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
     selectedOption.text = heroNameInput.value
   })
+
+  changeHeroIconButton.addEventListener('click', () => {})
 }
 
 function initHeroesSelectUi(heroes) {
