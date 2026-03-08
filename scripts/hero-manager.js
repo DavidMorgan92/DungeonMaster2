@@ -1,7 +1,8 @@
 class HeroManager {
-  constructor(heroes, canvasManager) {
+  constructor(heroes, canvasManager, mouseHandler) {
     this.heroes = heroes
     this.canvasManager = canvasManager
+    this.mouseHandler = mouseHandler
 
     this.canvasManager.addRenderOperation(this.render.bind(this))
 
@@ -60,18 +61,10 @@ class HeroManager {
 
       const scaleFactor = this.canvasManager.getScaleFactor()
       const offset = this.canvasManager.getOffset()
+      const screenPoint = { x: event.offsetX, y: event.offsetY }
 
       for (const hero of this.heroes) {
-        const heroRect = {
-          x: hero.x - hero.icon.width / 2,
-          y: hero.y - hero.icon.height / 2,
-          width: hero.icon.width,
-          height: hero.icon.height,
-        }
-
-        const screenRect = CoordinateUtils.worldRectToScreen(heroRect, scaleFactor, offset)
-
-        if (CoordinateUtils.pointInRect({ x: event.offsetX, y: event.offsetY }, screenRect)) {
+        if (this.pointOverHero(screenPoint, hero, scaleFactor, offset)) {
           this.hoveredHero = hero
           break
         }
@@ -80,5 +73,18 @@ class HeroManager {
       if (prevHovered !== this.hoveredHero)
         this.canvasManager.scheduleRender()
     }
+  }
+
+  pointOverHero(point, hero, scaleFactor, offset) {
+    const heroRect = {
+      x: hero.x - hero.icon.width / 2,
+      y: hero.y - hero.icon.height / 2,
+      width: hero.icon.width,
+      height: hero.icon.height,
+    }
+
+    const screenRect = CoordinateUtils.worldRectToScreen(heroRect, scaleFactor, offset)
+
+    return CoordinateUtils.pointInRect(point, screenRect)
   }
 }
