@@ -10,7 +10,7 @@ class CanvasManager {
     this.shadowCanvas.height = canvas.height
     this.shadowCtx = this.shadowCanvas.getContext('2d')
 
-    this.offsetX = 0
+    this.offsetX = 200
     this.offsetY = 0
     this.scaleFactor = 1.0
 

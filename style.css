@@ -8,13 +8,12 @@ body {
   font-family: sans-serif;
 }
 
-body {
-  display: flex;
-  flex-direction: row;
-}
-
 #drawer {
+  position: absolute;
   flex-shrink: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
   width: 200px;
   background-color: lightgray;
   padding: 0.5rem;
@@ -23,20 +22,38 @@ body {
   flex-direction: column;
   gap: 0.5rem;
   overflow-y: auto;
+  transition: transform 0.3s ease;
+  transform-origin: left;
 }
 
-#drawer select {
+#drawer.closed {
+  transform: scaleX(0);
+}
+
+#open-close-drawer {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  border-left: none;
+  transition: transform 0.3s ease;
+  transform-origin: left;
+  transform: translateX(216px);
+}
+
+#open-close-drawer.closed {
+  transform: translateX(0);
+}
+
+#heroes {
   flex-shrink: 0;
 }
 
 #main-canvas-container {
-  flex: 1;
-  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
 #main-canvas {
-  width: 100%;
-  height: 100%;
   display: block;
   cursor: grab;
 }
