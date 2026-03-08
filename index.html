@@ -60,7 +60,7 @@
 
   <script>
     (function() {
-      const sightProviders = []
+      const heroes = []
 
       const sightBlockers = [
         new SightBlocker(200, 200, 100, 100, 20),
@@ -70,7 +70,7 @@
       const mainCanvas = document.getElementById('main-canvas')
       const background = document.getElementById('background')
   
-      const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, sightProviders, sightBlockers)
+      const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, heroes, sightBlockers)
   
       const moveIcon = document.getElementById('move-icon')
       const rotateIcon = document.getElementById('rotate-icon')
@@ -107,8 +107,8 @@
 
       const backgroundImageLoader = new BackgroundImageLoader(background)
 
-      document.getElementById('change-background').addEventListener('click', () => {
-        backgroundImageLoader.load()
+      document.getElementById('change-background').addEventListener('click', async () => {
+        await backgroundImageLoader.load()
         canvasManager.scheduleRender()
       })
 
@@ -126,14 +126,14 @@
 
       document.getElementById('add-hero').addEventListener('click', () => {
         const newHero = new Hero(200, 200, 500)
-        sightProviders.push(newHero)
+        heroes.push(newHero)
         heroesSelect.add(new Option('New Hero'))
         canvasManager.scheduleRender()
       })
 
       document.getElementById('remove-hero').addEventListener('click', () => {
         if (heroesSelect.selectedIndex > -1) {
-          sightProviders.splice(heroesSelect.selectedIndex, 1)
+          heroes.splice(heroesSelect.selectedIndex, 1)
           heroesSelect.remove(heroesSelect.selectedIndex)
         }
 
