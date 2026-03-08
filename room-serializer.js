@@ -1,7 +1,8 @@
 class RoomSerializer {
-  constructor(sightBlockers, backgroundElement) {
+  constructor(sightBlockers, backgroundElement, heroes) {
     this.sightBlockers = sightBlockers
     this.backgroundElement = backgroundElement
+    this.heroes = heroes
 
     this.fileTypes = [{
       description: 'JSON',
@@ -14,6 +15,11 @@ class RoomSerializer {
 
     const room = {
       sightBlockers: this.sightBlockers,
+      heroes: this.heroes.map(hero => ({
+        x: hero.x,
+        y: hero.y,
+        radius: hero.radius,
+      })),
       background,
     }
 
@@ -43,6 +49,12 @@ class RoomSerializer {
 
     for (const sightBlocker of room.sightBlockers) {
       this.sightBlockers.push(new SightBlocker(sightBlocker.x, sightBlocker.y, sightBlocker.width, sightBlocker.height, sightBlocker.angle))
+    }
+
+    this.heroes.splice(0, this.heroes.length)
+
+    for (const hero of room.heroes) {
+      this.heroes.push(new Hero(hero.x, hero.y, hero.radius))
     }
 
     this.backgroundElement.src = room.background
