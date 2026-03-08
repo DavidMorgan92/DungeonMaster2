@@ -28,6 +28,7 @@
       <button id="add-hero">Add Hero</button>
       <button id="remove-hero">Remove Hero</button>
     </div>
+    <input id="hero-name" type="text">
 
     <h2>Sight Blockers</h2>
     <div>
@@ -135,8 +136,28 @@
           sightProviders.splice(heroesSelect.selectedIndex, 1)
           heroesSelect.remove(heroesSelect.selectedIndex)
         }
-        
+
         canvasManager.scheduleRender()
+      })
+
+      const heroNameInput = document.getElementById('hero-name')
+
+      heroesSelect.addEventListener('change', () => {
+        if (heroesSelect.selectedIndex < 0) {
+          heroNameInput.value = ''
+          return
+        }
+
+        const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
+        heroNameInput.value = selectedOption.text
+      })
+
+      heroNameInput.addEventListener('input', () => {
+        if (heroesSelect.selectedIndex < 0)
+          return
+
+        const selectedOption = heroesSelect.options[heroesSelect.selectedIndex]
+        selectedOption.text = heroNameInput.value
       })
     })()
   </script>
