@@ -11,15 +11,17 @@ class RoomSerializer {
   }
 
   async save() {
-    const background = await this.getBackgroundAsBase64()
+    const background = await this.getImageAsBase64(this.backgroundElement)
+    const heroIcons = await Promise.all(this.heroes.map(hero => this.getImageAsBase64(hero.icon)))
 
     const room = {
       sightBlockers: this.sightBlockers,
-      heroes: this.heroes.map(hero => ({
+      heroes: this.heroes.map((hero, index) => ({
         x: hero.x,
         y: hero.y,
         radius: hero.radius,
         name: hero.name,
+        icon: heroIcons[index],
       })),
       background,
     }
@@ -48,24 +50,26 @@ class RoomSerializer {
 
     this.sightBlockers.splice(0, this.sightBlockers.length)
 
-    for (const sightBlocker of room.sightBlockers) {
+    for (const sightBlocker of room.sightBlockers)
       this.sightBlockers.push(new SightBlocker(sightBlocker.x, sightBlocker.y, sightBlocker.width, sightBlocker.height, sightBlocker.angle))
-    }
 
     this.heroes.splice(0, this.heroes.length)
 
     for (const hero of room.heroes) {
-      this.heroes.push(new Hero(hero.x, hero.y, hero.radius, undefined, hero.name))
+      const iconElement = document.createElement('img')
+      iconElement.src = hero.icon
+      this.heroes.push(new Hero(hero.x, hero.y, hero.radius, iconElement, hero.name))
+      iconElement.remove()
     }
 
     this.backgroundElement.src = room.background
   }
 
-  async getBackgroundAsBase64() {
-    if (this.backgroundElement.src.startsWith('data:'))
-      return this.backgroundElement.src
+  async getImageAsBase64(imageElement) {
+    if (imageElement.src.startsWith('data:'))
+      return imageElement.src
 
-    const response = await fetch(this.backgroundElement.src)
+    const response = await fetch(imageElement.src)
     const blob = await response.blob()
 
     return new Promise((resolve, reject) => {
