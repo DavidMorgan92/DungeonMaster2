@@ -60,7 +60,7 @@
   <script src="room-serializer.js"></script>
 
   <script>
-    (function() {
+    (function () {
       const heroes = [
         new Hero(100, 100, 500),
       ]
@@ -69,17 +69,17 @@
         new SightBlocker(200, 200, 100, 100, 20),
         new SightBlocker(400, 300, 150, 150, 45),
       ]
-  
+
       const mainCanvas = document.getElementById('main-canvas')
       const background = document.getElementById('background')
-  
+
       const { canvasManager, mouseHandler } = initCanvas(mainCanvas, background, heroes, sightBlockers)
-  
+
       const moveIcon = document.getElementById('move-icon')
       const rotateIcon = document.getElementById('rotate-icon')
-  
+
       const roomEditor = new RoomEditor(canvasManager, moveIcon, rotateIcon, mouseHandler)
-  
+
       const editSightBlockersCheckbox = document.getElementById('edit-sight-blockers')
       const addSightBlockerButton = document.getElementById('add-sight-blocker')
       const deleteSelectedSightBlockerButton = document.getElementById('delete-selected-sight-blocker')
@@ -103,15 +103,15 @@
           heroesSelect.add(new Option('New Hero'))
         }
       }
-  
+
       const roomSerializer = new RoomSerializer(sightBlockers, background, heroes)
-  
+
       document.getElementById('save-room').addEventListener('click', async () => {
         await roomSerializer.save()
         roomEditor.reset()
         canvasManager.scheduleRender()
       })
-  
+
       document.getElementById('load-room').addEventListener('click', async () => {
         await roomSerializer.load()
         roomEditor.reset()
@@ -126,15 +126,7 @@
         canvasManager.scheduleRender()
       })
 
-      let drawerIsOpen = true
-      const openCloseDrawerButton = document.getElementById('open-close-drawer')
-
-      openCloseDrawerButton.addEventListener('click', () => {
-        drawerIsOpen = !drawerIsOpen
-        document.getElementById('drawer').classList = drawerIsOpen ? '' : 'closed'
-        openCloseDrawerButton.classList = drawerIsOpen ? '' : 'closed'
-        openCloseDrawerButton.textContent = drawerIsOpen ? '🞀' : '🞂'
-      })
+      initDrawer()
 
       document.getElementById('add-hero').addEventListener('click', () => {
         const newHero = new Hero(200, 200, 500)
@@ -172,6 +164,21 @@
         selectedOption.text = heroNameInput.value
       })
     })()
+
+    function initDrawer() {
+      let drawerIsOpen = true
+      const openCloseDrawerButton = document.getElementById('open-close-drawer')
+      const darwer = document.getElementById('drawer')
+
+      openCloseDrawerButton.addEventListener('click', () => {
+        drawerIsOpen = !drawerIsOpen
+        
+        const classList = drawerIsOpen ? '' : 'closed'
+        drawer.classList = classList
+        openCloseDrawerButton.classList = classList
+        openCloseDrawerButton.textContent = drawerIsOpen ? '🞀' : '🞂'
+      })
+    }
   </script>
 </body>
 
