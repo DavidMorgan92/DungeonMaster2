@@ -94,6 +94,7 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     heroNameInput.value = selectedOption.text
     heroNameInput.disabled = false
     changeHeroIconButton.disabled = false
+    sightRangeInput.value = heroes[heroesSelect.selectedIndex].radius
     sightRangeInput.disabled = false
     heroManager.selectHeroByIndex(heroesSelect.selectedIndex)
   })
@@ -119,6 +120,15 @@ function initHeroesUi(heroes, canvasManager, heroManager) {
     heroesSelect.selectedIndex = index
     heroesSelect.dispatchEvent(new Event('change'))
   }
+
+  sightRangeInput.addEventListener('input', () => {
+    if (heroesSelect.selectedIndex < 0)
+      return
+
+    const hero = heroes[heroesSelect.selectedIndex]
+    hero.radius = sightRangeInput.value
+    canvasManager.scheduleRender()
+  })
 }
 
 function initHeroesSelectUi(heroes) {
